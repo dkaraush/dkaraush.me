@@ -1,0 +1,209 @@
+html, body, head {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: #FAFAFA;
+
+    font-family: 'Source Sans Pro', 'Roboto', 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+}
+h1, h2, h3, h4, h5, h6, p {
+    margin: 2px 0;
+}
+
+#root {
+    display: block;
+    max-width: 800px;
+    width: 100%;
+    padding: 72px 24px;
+    box-sizing: border-box;
+    margin: 0 auto;
+}
+@media print {
+    html, body, head {
+        background: #FFFFFF;
+    }
+    .ps {
+        display: none;
+    }
+    #root {
+        padding: 8px 24px;
+    }
+}
+
+
+#header {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: center;
+
+    margin-bottom: 16px;
+}
+#header img {
+    width: 64px;
+    height: 64px;
+    flex: 0 0 64px;
+    margin-right: 16px;
+    border-radius: 4px;
+}
+
+.intro {
+    display: flex;
+    flex-direction: row;
+}
+.intro > .info {
+    flex: 1;
+    margin: 0 16px 0 0;
+}
+.intro > .skills {
+    flex: 2 1 0;
+}
+@media screen and (max-width: 600px) {
+    .intro {
+        flex-direction: column;   
+    }
+    .intro > .info {
+        margin: 0 0 16px 0;
+    }
+}
+
+div.box {
+    margin: 8px 0;
+}
+div.box > div.header {
+    page-break-inside: avoid;
+    display: flex;
+    align-items: center;
+    margin: 4px 0 0 0;
+
+    /* padding-left: 32px; */
+    /* position: relative; */
+}
+div.box > div.header > h2,
+div.box > div.header > h3 {
+    flex: 2 0 auto;
+}
+div.box > div.content {
+    padding-left: 32px;
+}
+@media (max-width: 800px) {
+    div.box > div.content {
+        padding-left: 16px;
+    }
+}
+div.box > div.header > h2 {
+    margin-top: -1px;
+}
+div.box > div.header > img {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    display: inline-block;
+    /* position: absolute; */
+    /* left: 0; */
+}
+div.box > div.header > div.tags {
+    margin-left: auto;
+}
+div.tags {
+    display: inline-block;
+    text-align: right;
+}
+div.tags > span, div.tags > a, span.tag, span.stag {
+    display: inline-block;
+    background: #eceff1;
+    padding: 4px 8px;
+    border-radius: 3px;
+    margin: 4px 4px 0 0;
+    white-space: nowrap;
+}
+div.tags > span,  span.tag, span.stag {
+    color: #263238;
+}
+div.tags > a {
+    text-decoration: none;
+    transition: color 0.05s ease-in-out,
+                background-color 0.05s ease-in-out;
+}
+div.tags > a:hover {
+    text-decoration: underline;
+}
+div.tags > a:active {
+    background-color: #DDE3E6;
+    text-decoration: underline;
+}
+span.stag {
+    padding: 1px 2px;
+}
+@media (max-width: 800px) {
+    div.tags {
+        display: block;
+    }
+    div.tags > span, div.tags > a, span.tag, span.stag {
+        font-size: 13px;
+    }
+}
+@media (max-width: 500px) {
+    div.box > div.header {
+        flex-wrap: wrap;
+    }
+    div.box > div.header > h2,
+    div.box > div.header > h3 {
+        flex: 1;
+    }
+    div.tags {
+        text-align: left;
+        margin-left: 0 !important;
+    }
+}
+
+span.grey {
+    opacity: 0.4;
+    font-weight: normal;
+    font-size: 16px;
+    margin-left: 8px;
+}
+.half-opacity {
+    opacity: 0.4;
+}
+
+span.separator {
+    display: block;
+    margin: 256px 0 32px 0;
+    width: 100%;
+    height: 1px;
+    background-color: #DEE2E3;
+}
+
+span.emoji {
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+    vertical-align: middle;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+span.emoji.first    { background-image: url(./images/emoji/first.png); }
+span.emoji.second   { background-image: url(./images/emoji/second.png); }
+span.emoji.third    { background-image: url(./images/emoji/third.png); }
+span.emoji.prize    { background-image: url(./images/emoji/prize.png); }
+
+ul {
+    margin: 0;
+    padding-inline-start: 22px;
+}
+.ps ul > li {
+    margin-bottom: 16px;
+}
+ul > li > div.tags {
+    float: right;
+    visibility: top;
+}
+.ps ul li div.tags {
+    margin-left: 8px;
+    white-space: nowrap;
+}
