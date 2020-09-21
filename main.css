@@ -12,6 +12,28 @@ h1, h2, h3, h4, h5, h6 {
 h1, h2, h3, h4, h5, h6, p {
     margin: 2px 0;
 }
+a {
+    color: #0d47a1;
+}
+a:hover {
+    color: #002171;
+}
+a:active {
+    color: #EB3223;
+    color: -webkit-activelink;
+}
+a:visited {
+    color: #6a1b9a;
+}
+a:hover:visited {
+    color: #38006b;
+}
+.link-here {
+    display: none;
+}
+#header {
+    margin-top: 0;
+}
 
 #root {
     display: block;
@@ -31,6 +53,15 @@ h1, h2, h3, h4, h5, h6, p {
     #root {
         padding: 8px 24px;
     }
+
+
+    .link-here {
+        display: block;
+        opacity: 0.5;
+    }
+    #header {
+        margin-top: 8px;
+    }
 }
 
 
@@ -40,7 +71,7 @@ h1, h2, h3, h4, h5, h6, p {
     justify-content: stretch;
     align-items: center;
 
-    margin-bottom: 16px;
+    margin-bottom: 8px;
 }
 #header img {
     width: 64px;
