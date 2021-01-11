@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Programmable color correction</title>
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+	<style type="text/css">
+		html, head, body {
+			margin: 0;
+			padding: 0;
+			background: #EAEAEA;
+			font-family: 'Roboto';
+		}
+		body {
+			padding: 2em 0;
+		}
+		.eff {
+			background: rgba(100,255,100,0.2);
+		}
+		div#workspace {
+			display: block;
+			width: 85%;
+			max-width: 800px;
+			margin: auto;
+			padding: 1em;
+			background: white;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		}
+		div.button {
+			transition: all 0.2s ease-in-out;
+			padding: 0.5em 1em;
+			background: #43A047;
+			border-radius: 2px;
+			color: white;
+			display: inline-block;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			cursor: pointer;
+			position: relative;
+			overflow: hidden;
+		}
+		div.button:hover {
+			background: #388E3C;
+		}
+		h1,h2,h3,h4,h5,h6 {
+			font-weight: 300;
+			margin: 0;
+		}
+		input[type=file] {
+		}
+		div.snippet {
+			display: inline-block;
+			cursor: pointer;
+			padding: 0.5em 1em;
+			border: 1px solid rgba(0,0,0,0.1);
+			border-radius: 3px;
+			border-bottom: none;
+			transition: all 0.1s ease-in-out;
+			overflow: hidden;
+			position: relative;
+		}
+		div.snippet:hover {
+			background: rgba(0,0,0,0.05);
+		}
+		div#snippets {
+			display: block;
+		}
+		div.snippet.active {
+			background: rgba(0,255,0,0.1);
+		}
+		canvas {
+			box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+			margin: 1em auto;
+			display: block;
+
+		}
+		input[type=number] {
+			width: 50px;
+			border: 0;
+			outline: none;
+			border-bottom: 1px solid black;
+			padding: 0.6em 0.75em 0.2em 0.75em;
+		}
+		#blank {
+			vertical-align: top;
+			height: 100%;
+		}
+		#blank * {
+			vertical-align: bottom;
+			margin-right: 0.5em;
+		}
+		#blank span {
+			margin-bottom: 0.5em;
+		}
+		div.separator {
+			height: 1em;
+		}
+		div#error {
+			padding: 0.5em 1em;
+			background: rgba(255,100,100,0.3);
+			border-bottom: 1px solid red;
+		}
+	</style>
+</head>
+<body>
+
+	<div id="workspace">
+		<span>Upload image file: </span><input type="file" name="" id="file" accept="image/png,image/jpeg">
+		<div class="separator"></div>
+		<span>OR</span>
+		<div id="blank"><span>Make blank image: </span><input type="number" value="300" max="300" min="10" id="width"><span>x</span><input type="number" value="300" max="300" min="10" id="height"><div class="button" id="create-blank">CREATE BLANK</div></div>
+		<canvas width='300' height='300'></canvas>
+		<!--div id="snippets">
+			<div class='snippet active'>Custom</div>
+			<div class='snippet'>Gray</div>
+			<div class='snippet'>Only Red</div>
+			<div class='snippet'>Gradient</div>
+			<div class='snippet'>Blur</div>
+		</div-->
+		<div id="error" style='display:none'>Error occured. Check console (F12) for an error. Error pixels are displayed as purple-black texture.</div>
+<textarea>
+/*
+	you have: 
+		r - red channel (from 0 to 255)
+		g - green channel (from 0 to 255)
+		b - blue channel (from 0 to 255)
+		a - alpha (from 0 to 255)
+		x - X coordinate from left-top
+		y - Y coordinate from left-top
+		w - width
+		h - height
+		pixels - a data array, which contains width*height*4 elements, looks like: R,G,B,A,R,G,B,A... For example: R channel for pixel at (x=20;y=30) == pixels[(30*w+20)*4] or B channel for pixel at (x=10;y=2) == pixels[(2*w+10)*4+2]
+	variables: WHITE, BLACK, TRANSPARENT	
+*/
+
+return {r: r, g: g, b: b, a: a};
+</textarea>
+		<br>
+		<div class='button' id="run">RUN</div>
+
+	</div>
+
+
+	<link rel="stylesheet" type="text/css" href="codemirror.css">
+	<script type="text/javascript" src="codemirror.js"></script>
+	<script type="text/javascript" src="js-mode.js"></script>
+	<script type="text/javascript">
+		var editor = CodeMirror.fromTextArea(document.querySelector("textarea"), {
+			lineNumbers: true,
+  			mode: "javascript",
+  			value: "return function pixel(r, g, b) {\n\t\n\t/* do something */\n\t\n}"
+		});
+	</script>
+
+	<script type="text/javascript">
+		const errorFunc = function (r,g,b,a,x,y){return {r: (~~(x/5)+~~(y/5))%2==0?255:0, g: 0, b: (~~(x/5)+~~(y/5))%2==0?255:0, a: 255};}
+		const WHITE = {r: 255, g: 255, b: 255, a: 255};
+		const BLACK = {r: 0, g: 0, b: 0, a: 255};
+		const TRANSPARENT = {r:0,g:0,b:0,a:0};
+
+		var code = null;
+		var canvas = document.querySelector("canvas");
+		var ctx = canvas.getContext('2d');
+		var image = null;
+		var workspace = document.querySelector("div#workspace");
+		var input = document.querySelector("input[type=file]");
+		input.addEventListener("change", function () {
+			if (input.files && input.files[0]) {
+				// var reader = new FileReader();
+				// reader.onload = function (e) {
+					image = new Image;
+					image.onload = function () {
+						render();
+					}
+					image.src = URL.createObjectURL(input.files[0]);
+				// };
+				// reader.readAsDataURL(input.files[0]);
+			}
+		})
+		function render(blank, w, h) {
+			var W, H;
+			if (!blank) {
+				// size
+				var aspect = image.width / image.height;
+				// max-height = 800px
+				// max-width = 800px ~ workspace.clientWidth-32
+				var maxHeight = 400;
+				var maxWidth = 400;
+				if (image.width < maxWidth && image.height < maxHeight) {
+					W = canvas.width = image.width;
+					H = canvas.height = image.height;
+				} else if (maxHeight * aspect <= maxWidth) {
+					W = canvas.width = maxHeight * aspect;
+					H = canvas.height = maxHeight;
+				} else if (maxWidth / aspect <= maxHeight) {
+					W = canvas.width = maxWidth;
+					H = canvas.height = maxWidth / aspect;
+				} else {
+					W = canvas.width = 300;
+					H = canvas.height = 300;
+					ctx.fillStyle = "rgba(255,100,100,0.4)";
+					ctx.fillRect(0,0,W,H);
+					return;
+				}
+W=image.width, H = image.height;canvas.width=W;canvas.height=H;
+				ctx.clearRect(0, 0, W, H);
+				ctx.drawImage(image, 0, 0, W, H);
+			} else {
+				W = w > 300 ? 300 : (w < 1 ? 1 : w);
+				H = h > 300 ? 300 : (h < 1 ? 1 : h);
+				canvas.width = W;
+				canvas.height = H;
+				ctx.fillStyle="black";
+				ctx.fillRect(0,0,W,H);
+			}
+			code = editor.getValue();
+
+			var imageData = ctx.getImageData(0,0,W,H);
+			var ndata = imageData.data, data = ndata.slice(0);
+			var func;
+			var res, wasErrors = false;
+			try {
+				func = new Function('r','g','b','a','x','y','w','h','pixels', code);
+			} catch (e) {
+				func = errorFunc;
+				console.log("error:", e);
+				wasErrors = true;
+				document.querySelector("#error").style.display = "block";
+			}
+			for (var x = 0; x < W; ++x) {
+				for (var y = 0; y < H; ++y) {
+					res = null;
+					try {
+						res = func(data[(y*W+x)*4], data[(y*W+x)*4+1], data[(y*W+x)*4+2], data[(y*W+x)*4+3], x, y, W, H, data);
+					} catch (e) {
+						res = errorFunc(null,null,null,null,x,y);
+						if (!wasErrors)
+							console.log("error:", e)
+						wasErrors = true;
+					}
+
+					if (res == null || 
+						typeof res.r !== "number" ||
+						typeof res.g !== "number" ||
+						typeof res.b !== "number" ||
+						typeof res.a !== "number") {
+						if (!wasErrors) 
+							console.log("error: ", "\nreturned null \nOR\nmissing r, g or b parameter \nOR\nr, g or b isn't/aren't number");
+						wasErrors = true;
+						res = errorFunc(null,null,null,null,x,y);
+					}
+					ndata[(y*W+x)*4]=  normalize(res.r);
+					ndata[(y*W+x)*4+1]=normalize(res.g);
+					ndata[(y*W+x)*4+2]=normalize(res.b);
+					ndata[(y*W+x)*4+3]=normalize(res.a);
+				}
+			}
+			document.querySelector("#error").style.display = wasErrors ? "block" : "none";
+			//imageData.data = ndata;
+			ctx.putImageData(imageData, 0, 0);
+		}
+
+		function normalize(a) {
+			return a < 0 ? 0 : (a > 255 ? 255 : Math.round(a));
+		}
+
+		document.querySelector("#run.button").addEventListener("click", function () {
+			render(!image, document.querySelector("#width").value, document.querySelector("#height").value);
+		});
+		function makeBlank() {
+			image = null;	
+			render(true, document.querySelector("#width").value, document.querySelector("#height").value);
+		}
+		document.querySelector("#create-blank.button").addEventListener("click", makeBlank);
+		makeBlank();
+	</script>
+
+	<!-- ripple button effect -->
+	<script type="text/javascript">
+		function init(div) {
+			div.style.userSelect="none";
+			div.style.webkitUserSelect="none";
+			div.style.mozUserSelect="none";
+			div.style.msUserSelect="none";
+			div.addEventListener("mousedown", function (e) {
+				if (e.button != 0) return;
+				var x=e.layerX, y=e.layerY, w=div.clientWidth, h=div.clientHeight;
+				var D1 = Math.sqrt(x*x + y*y);
+				var D2 = Math.sqrt((w-x)*(w-x) + y*y);
+				var D3 = Math.sqrt((w-x)*(w-x) + (h-y)*(h-y));
+				var D4 = Math.sqrt(x*x + (h-y)*(h-y));
+				var mD = Math.max(D1, D2, D3, D4);
+				var clickEff = document.createElement("div");
+				clickEff.style.position = "absolute";
+				clickEff.style.opacity = 1;
+				clickEff.className = "eff";
+				clickEff.style.borderRadius = "50%";
+				clickEff.style.transition = "all .5s ease-in-out";
+				clickEff.style.top = e.layerY+"px";
+				clickEff.style.left = e.layerX+"px";
+				clickEff.style.width = "0px";
+				clickEff.style.height = "0px";
+				clickEff.style.padding = "0px";
+				clickEff.style.margin = "0px";
+				clickEff.style.zIndex = 5;
+				div.appendChild(clickEff);
+				setTimeout(function () {
+					clickEff.style.width=clickEff.style.height=mD*2+"px";
+					clickEff.style.left=e.layerX-(mD)+"px";
+					clickEff.style.top=e.layerY-(mD)+"px";
+				}, 5);	
+			});
+			function mouseup(e) {
+				div.querySelectorAll(".eff").forEach(function (clickEff) {
+					clickEff.style.opacity = 0;
+					setTimeout(function () {
+						clickEff.remove();
+					},500);
+				});
+			}
+			div.addEventListener("mouseup", mouseup);
+			div.addEventListener("mouseover", mouseup);
+		}
+		document.querySelectorAll(".button, .snippet").forEach(init);
+	</script>
+
+</body>
+</html>

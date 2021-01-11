@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<style type="text/css">
+canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+}
+#ui {
+	position: absolute;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	width: 275px;
+
+	/*background: red;*/
+	z-index: 1;
+	overflow-y: auto;
+	padding: 0.5em 0;
+}
+#ui, #ui button {
+	font-family: 'Source Code Pro', Consolas, monospace !important;
+}
+#ui .uisector-content {
+	margin-left: 1em;
+}
+#ui h3 {
+	margin: 0.25em 0;
+}
+#ui h4, #ui h5 {
+	margin: 0.125em 0;
+}
+#ui .comment {
+	font-size: 0.75em;
+}
+#meshError {
+	color: red;
+	font-size: 0.75em;
+}
+</style>
+</head>
+<body>
+<canvas></canvas>
+<div id="ui">
+	<div class="uisector">
+		<h3>Mesh</h3>
+		<div class="uisector-content">
+			<label>Mesh</label>
+			<select id="shape"></select>
+			<br>
+			<h4>Load own mesh</h3>
+			<div class='uisector-content'>
+				<label>Mesh name</label>
+				<input type="text" id="meshName" placeholder="sample" style="width:120px">
+				<br>
+				<label>Load .obj</label>
+				<input type="file" id="meshFile" style='width: 120px;' accept='.obj'>
+				<br>
+				<button id="meshLoad">Load</button>
+				<label id="meshError"></label>
+				<br>
+				<button id="meshRemove">Remove all custom models</button>
+			</div>
+		</div>
+	</div>
+	<div class="uisector">
+		<h3>Rendering</h3>
+		<label>Background color</label>
+		<input type="color" id="bgColor">
+		<br>
+		<div class="uisector-content">
+			<h4>Vertices</h4>
+			<div class="uisector-content">
+				<label>Enabled</label>
+				<input type="checkbox" id="v">
+				<br>
+				<label>Diameter</label>
+				<input type="number" id="vDiameter" style='width: 50px;'>
+				<br>
+				<label>Color</label>
+				<input type="color" id="vColor">
+			</div>
+		</div>
+		<div class="uisector-content">
+			<h4>Edges</h4>
+			<div class='uisector-content'>
+				<h4>Inner</h4>
+				<div class="uisector-content">
+					<label>Enabled</label>
+					<input type="checkbox" id="ei">
+					<br>
+					<label>Width</label>
+					<input type="number" id="eiWidth"  style='width: 50px;'>
+					<br>
+					<label>Color</label>
+					<input type="color" id="eiColor">
+					<br>
+					<label>Line dashes</label>
+					<input id="eiDashes" style='width: 50px;'>
+				</div>
+				<h4>Outter</h4>
+				<div class="uisector-content">
+					<label>Enabled</label>
+					<input type="checkbox" id="eo">
+					<br>
+					<label>Width</label>
+					<input type="number" id="eoWidth"  style='width: 50px;'>
+					<br>
+					<label>Color</label>
+					<input type="color" id="eoColor">
+					<br>
+					<label>Line dashes</label>
+					<input id="eoDashes" style='width: 50px;'>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="uisector">
+		<h3>Rotating</h3>
+		<div class="uisector-content">
+			<label>Automatic</label>
+			<input type="radio" name="control" value="rAuto" id="rAuto">
+			<br>
+			<label>Mouse</label>
+			<input type="radio" name="control" value="rMouse" id="rMouse">
+		</div>
+	</div>
+	<br>
+	<button id="reset">Reset</button>
+	<br>
+	<br>
+	<p class='comment'>// this demo doesn't contain THREE.js or any other 3d engines</p>
+</div>
+<script type="text/javascript" src="models.js"></script>
+<script type="text/javascript">
+Object.getOwnPropertyNames(Math).forEach(function(s){window[s]=Math[s]});
+var canvas = document.querySelector('canvas');
+var ctx = canvas.getContext('2d');
+
+var uiwidth = 200;
+var W, H;
+var centerx, centery;
+function onResize() {
+	canvas.width = W = window.innerWidth * window.devicePixelRatio;
+	canvas.height = H = window.innerHeight * window.devicePixelRatio;
+	centerx = W/2 - uiwidth;
+	centery = H/2;
+}
+onResize();
+window.addEventListener('resize', onResize);
+
+var shapeName = 'icosphere1';
+
+var vDiameter = 6;
+
+var default_values = {
+	shape: 'icosphere1',
+	v: true,
+	vDiameter: 6,
+	vColor: "#000000",
+	ei: true,
+	eiWidth: 3,
+	eiColor: "#000000",
+	eiDashes: '[0]',
+	eo: true,
+	eoWidth: 1,
+	eoColor: "#000000",
+	eoDashes: '[4,4]',
+	bgColor: "#FAFAFA",
+	rAuto: true,
+	rMouse: false
+}
+var values = Object.assign({}, default_values);
+if (localStorage.values) {
+	try {
+		var loaded = JSON.parse(localStorage.values)
+		Array.from(Object.keys(loaded), function (key) {
+			var value = loaded[key];
+			if (value == 'true' || value == 'false')
+				value = value == 'true';
+			try {
+				var pvalue = parseFloat(value);
+				if (!isNaN(pvalue))
+					value = pvalue;
+			} catch (e) {}
+			values[key] = value;
+		})
+	} catch (e) {}
+}
+
+document.querySelectorAll('input[type=radio][name="control"]').forEach(function (radio) {
+	radio.addEventListener('change', function () {
+   		values.rAuto = this.value == 'rAuto';
+   		values.rMouse = this.value == 'rMouse';
+	});
+});
+
+Object.keys(values).forEach(function (uielement) {
+	var uie = document.querySelector("#" + uielement);
+	if (uielement == 'shape') {
+		if (Object.keys(shapes).indexOf(values[uielement]) == -1)
+			values[uielement] = Object.keys(shapes)[0];
+		uie.innerHTML = Array.from(Object.keys(shapes), function (s) {return "<option value='"+s+"'>"+s+"</option>"}).join("\n");
+	}
+	setValue(uie, values[uielement]);
+	uie.addEventListener(uie.type=='text'?"keyup":"change", function () {
+		values[uielement] = getValue(uie);
+		localStorage.setItem('values', JSON.stringify(values));
+	})
+});
+function updateMeshList() {
+	var shapeselect = document.querySelector('#shape');
+	shapeselect.innerHTML = Array.from(Object.keys(shapes), function (s) {return "<option value='"+s+"'>"+s+"</option>"}).join("\n");
+	setValue(shapeselect, values.shape);
+}
+document.querySelector("#reset").addEventListener('click', function (e) {
+	values = default_values;
+	localStorage.setItem('values', JSON.stringify(values));
+	Object.keys(values).forEach(function (uielement) {
+		var uie = document.querySelector("#" + uielement);
+		setValue(uie, values[uielement]);
+	});
+});
+document.querySelector("#meshRemove").addEventListener('click', function (e) {
+	localStorage.savedMeshesNames = "[]";
+	Array.from(localStorage, function (key) {
+		if (['savedMeshesNames','values'].indexOf(key) == -1)
+			localStorage.removeItem(key);
+	});
+	if (['pyramid4','icosphere1','icosphere2 (no inner)','cube','monkey (blender)','dr-penguin'].indexOf(values.shape) == -1)
+		values.shape = 'icosphere1';
+	updateMeshList();
+});
+
+// mesh loader
+var meshNameInput = document.querySelector("#meshName");
+var meshFileInput = document.querySelector("#meshFile");
+var meshLoadButton = document.querySelector("#meshLoad");
+var meshErrorLabel = document.querySelector("#meshError");
+meshLoadButton.addEventListener("click", function () {
+	meshErrorLabel.innerHTML = "";
+
+	var meshName = meshNameInput.value;
+	if (meshName.length == 0 || meshName.length > 100) {
+		meshErrorLabel.innerHTML = "name's length must be from 1 to 100";
+		return;
+	}
+
+	if (meshFileInput.files.length == 0) {
+		meshErrorLabel.innerHTML = "file is missing";
+		return;
+	}
+
+	var file = meshFileInput.files[0];
+	var reader;
+	try {
+		reader = new FileReader();
+		reader.readAsText(file, "UTF-8");
+	} catch (e) {
+		meshErrorLabel.innerHTML = "your browser doesn't support this";
+		return;
+	}
+	reader.onload = function (evt) {
+		var mesh = parseMesh(evt.target.result);
+		shapes[meshName] = mesh;
+		values.shape = meshName;
+		updateMeshList();
+
+		var savedMeshesNames = JSON.parse(localStorage.savedMeshesNames) || [];
+		savedMeshesNames.push(meshName);
+		localStorage[meshName] = JSON.stringify(mesh);
+		localStorage.savedMeshesNames = JSON.stringify(savedMeshesNames);
+	};
+	reader.onerror = function (evt) {
+		meshErrorLabel.innerHTML = "error reading file";
+	};
+});
+
+function parseMesh(text) {
+	var vertices = [];
+	var edges = [];
+
+	var maxdist = 0;
+	var lines = text.split('\n');
+	for (var i = 0; i < lines.length; ++i) {
+		var u = lines[i].split(' ');
+		if (u[0] == 'v') {
+			var x = parseFloat(u[1]);
+			var y = parseFloat(u[2]);
+			var z = parseFloat(u[3]);
+			vertices.push([x,y,z]);
+			var dist = sqrt(x*x+y*y+z*z);
+			if (dist > maxdist)
+				maxdist = dist;
+		} else if (u[0] == 'f') {
+			var ar = Array.from(u.slice(1), function (a) {
+				return parseInt(a.split('/')[0])-1;
+			});
+			for (var j = 0; j < ar.length; ++j) {
+				var o = j+1;
+				if (o == ar.length) o = 0;
+				edges.push([ar[j],ar[o]]);
+			}
+		}
+	}
+	console.log(maxdist);
+	for (var i = 0; i < vertices.length; ++i) {
+		var v = vertices[i];
+		vertices[i] = [
+			v[0] / maxdist,
+			v[1] / maxdist,
+			v[2] / maxdist
+		];
+	}
+
+	for (var i = 0; i < edges.length; ++i) {
+		var f = true;
+		for (var j = i+1; j < edges.length; ++j) {
+			if ((edges[i][0] == edges[j][0] && edges[i][1] == edges[j][1]) || 
+				(edges[i][0] == edges[j][1] && edges[i][1] == edges[j][0])) {
+				f = false;
+				break;
+			}
+		}
+		if (f) {
+			edges.splice(i, 1);
+				i--;
+		}
+	}
+
+	return {
+		vertices: vertices,
+		edgesInner: [],
+		edgesOutter: edges
+	}
+}
+
+function getValue(e) {
+	if (e.type == 'checkbox' || e.type == "radio") {
+		return e.checked;
+	}
+	return e.value;
+}
+function setValue(e, v) {
+	if (e.type == 'checkbox' || e.type == "radio")
+		e.checked = v;
+	else e.value = v;
+}
+
+var rx = 0, ry = 0;
+var mouseDown = false;
+var lastMouse = {x: 0, y: 0};
+canvas.addEventListener('mousedown', onMouseDown);
+canvas.addEventListener('touchstart', onMouseDown);
+function onMouseDown(e) {
+	mouseDown = true;
+	lastMouse.x = (e.changedTouches || [e])[0].pageX;
+	lastMouse.y = (e.changedTouches || [e])[0].pageY;
+}
+canvas.addEventListener('mouseup', onMouseUp);
+canvas.addEventListener('touchend', onMouseUp);
+function onMouseUp() {
+	mouseDown = false;
+}
+canvas.addEventListener('mousemove', onMouseMove);
+canvas.addEventListener('touchmove', onMouseMove);
+function onMouseMove(e) {
+	var x = (e.changedTouches || [e])[0].pageX;
+	var y = (e.changedTouches || [e])[0].pageY;
+	if (mouseDown) {
+		ry += (lastMouse.x - x)/400*Math.PI;
+		rx -= (lastMouse.y - y)/400*Math.PI;
+	}
+	lastMouse.x = x;
+	lastMouse.y = y;
+}
+function onTouchMove(e) {
+	e.preventDefault();
+	e.changedTouches[0].pageX
+}
+
+var rIndex = 1;
+var _rotX = null;
+var _rotY = null;
+
+var t = 0;	
+
+var lastTime = Date.now();
+function render() {
+	requestAnimationFrame(render);
+	t += (Date.now() - lastTime) / 1000;
+	lastTime = Date.now();
+
+	var rotations = (values.shape == 'icosphere1' ? [[-0.19634954084936299-2*PI, -0.3141592653589798-2*PI],[-PI, -PI],[-0.706858347057704-2*PI, -0.808960108299372-2*PI]] : [[PI/4,PI/4],[-PI/4,PI/4],[-PI/4,-PI/4],[PI/4,-PI/4]]);
+	if (_rotX == null) {
+		_rotX = rotations[0][0];
+		_rotY = rotations[0][1];
+	}
+
+	if (t >= 2) {
+		t = 0;
+		_rotX = rotations[rIndex][0];
+		_rotY = rotations[rIndex][1];
+
+		rIndex++;
+		if (rIndex == rotations.length)
+			rIndex = 0;
+	}
+	if (values.rAuto) {
+		rx = _rotX + (rotations[rIndex][0] - _rotX) * easeInOut(t>1.5?1:(t/1.5));
+		ry = _rotY + (rotations[rIndex][1] - _rotY) * easeInOut(t>1.5?1:(t/1.5));
+	}
+
+	ctx.fillStyle = values.bgColor;
+	ctx.fillRect(0,0,W,H);
+
+	var sx = Math.min(W-uiwidth,H)/10;
+	var sy = Math.min(W-uiwidth,H)/10;
+
+	var shape = shapes[values.shape];
+	var vertices = Array.from(shape.vertices, function (v) {
+		return s(r(v, rx, ry), 3);
+	});
+
+	// drawing edges
+	if (values.ei) {
+		ctx.lineWidth = values.eiWidth;
+		ctx.strokeStyle = values.eiColor;
+		var dashes = [0];
+		try {
+			var pdashes = eval(values.eiDashes);
+			if (Array.isArray(pdashes))
+				dashes = pdashes; 
+		} catch (e) {}
+		ctx.setLineDash(dashes);
+		for (var i = 0; i < shape.edgesInner.length; ++i) {
+			var v1 = vertices[shape.edgesInner[i][0]];
+			var v2 = vertices[shape.edgesInner[i][1]];
+			ctx.beginPath();
+			ctx.moveTo(centerx-v1[0]*sx,centery-v1[1]*sy);
+			ctx.lineTo(centerx-v2[0]*sx,centery-v2[1]*sy);
+			ctx.stroke();
+		}
+	}
+
+	if (values.eo) {
+		ctx.lineWidth = values.eoWidth;
+		ctx.strokeStyle = values.eoColor;
+		var dashes = [0];
+		try {
+			var pdashes = eval(values.eoDashes);
+			if (Array.isArray(pdashes))
+				dashes = pdashes; 
+		} catch (e) {}
+		ctx.setLineDash(dashes);
+		for (var i = 0; i < shape.edgesOutter.length; ++i) {
+			var v1 = vertices[shape.edgesOutter[i][0]];
+			var v2 = vertices[shape.edgesOutter[i][1]];
+			ctx.beginPath();
+			try {
+				ctx.moveTo(centerx-v1[0]*sx,centery-v1[1]*sy);
+				ctx.lineTo(centerx-v2[0]*sx,centery-v2[1]*sy);
+			} catch (e) {
+				//console.log(shape.edgesOutter[i][0])
+			}
+			ctx.stroke();
+		}
+	}
+
+	// drawing vertices
+	if (values.v) {
+		ctx.fillStyle = values.vColor;
+		for (var i = 0; i < vertices.length; ++i) {
+			ctx.beginPath();
+			var v = vertices[i];
+			ctx.arc(centerx-v[0]*sx,centery-v[1]*sy,values.vDiameter/2,0,PI*2);
+			ctx.fill();
+		}
+	}
+}
+render();
+
+function easeInOut(t) {
+	return t<.5 ? 2*t*t : -1+(4-2*t)*t;
+}
+
+function r(v, rx, ry) {
+	return [
+		(v[1]*sin(rx) + v[2]*cos(rx))*sin(ry) + v[0]*cos(ry),
+		v[1]*cos(rx) - v[2]*sin(rx),
+		(v[1]*sin(rx) + v[2]*cos(rx))*cos(ry)-v[0]*sin(ry)
+	];
+}
+function s(v, s) {
+	return [v[0]*s, v[1]*s, v[2]*s];
+}
+
+</script>
+</body>
+</html>

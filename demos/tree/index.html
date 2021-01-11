@@ -1,0 +1,147 @@
+<html>
+	<head>
+		<style>
+			body, head, html {
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+				background: #000;
+			}
+			table {
+				color: #0f0;
+			}
+			canvas {
+				background: #000;
+			}
+			.hint {
+				position: absolute;
+				bottom: 20px;
+				left: 20px;
+				color: #888;
+				font-family: Consolas;
+			}
+		</style>
+		<title>3D Cristmas Tree in ASCII</title>
+		<script src="jquery.min.js"></script>
+		<script src="three.js"></script>
+		<script src="ascii.js"></script>
+	</head>
+	<body onresize = "onResize()">
+		<div id="webgl"></div>
+		<div class="hint">
+			<b>E</b> +speed <br>
+			<b>D</b> -speed <br>
+			<b>S</b> speed = sin(x) <br>
+			<b>V</b> change visualization
+		</div>
+		<script>
+			var w = window.innerWidth, h = window.innerHeight;
+			var scene, camera, renderer, inited = false, c = new Array(3), effect, container;
+			container = document.getElementById("webgl");
+			
+			speedSin = false;
+			ascii = true;
+			document.onkeypress = function (e) {
+				console.log(e.code)
+				if (e.code == "KeyE")
+					speed += 0.25;
+				else if (e.code == "KeyD") 
+					speed -= 0.25;
+				else if (e.code == "KeyS")
+					speedSin = !speedSin;
+				else if (e.code == "KeyV") {
+					ascii = !ascii;
+					container.innerHTML = "";
+					if (ascii) {
+						container.appendChild(effect.domElement);
+					} else {
+						container.appendChild(renderer.domElement);
+					}
+				}
+			}
+
+			$(init);
+
+			function init () {
+				scene = new THREE.Scene();
+				camera = new THREE.PerspectiveCamera(45, w/h, 0.1, 20000);
+				camera.position.set(0,5,-2);				
+
+				scene.add(camera);
+
+
+				renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
+				renderer.setClearColor("white");
+
+				var light = new THREE.PointLight(0xffffff);
+				light.position.set(0,30,0);
+				scene.add(light);
+
+				var material = new THREE.MeshLambertMaterial( {color: 0x008800 } );
+				
+				c[0] = new THREE.Mesh( new THREE.CylinderGeometry( 0, 6, 5, 4 ), material );
+				c[0].position.set(0,2,20);
+				scene.add( c[0] );
+
+				c[1] = new THREE.Mesh( new THREE.CylinderGeometry( 0, 5, 4.5, 4 ), material );
+				c[1].position.set(0,5.5,20);
+				scene.add(c[1]);
+
+				c[2] = new THREE.Mesh( new THREE.CylinderGeometry( 0, 4, 3.5, 4 ), material );
+				c[2].position.set(0,9,20);
+				scene.add( c[2] );
+
+				camera.lookAt(c[1].position);
+				renderer.setSize(w, h);
+
+
+				effect = new THREE.AsciiEffect(renderer);
+				effect.setSize(w, h);
+				container.appendChild(effect.domElement);
+
+				effect.render(scene, camera);
+				// renderer.render(scene, camera);
+				inited = true;
+
+				render();
+			}
+
+			var lastTime = Date.now();
+			i=0;
+			var speed = 1;
+			function render() {
+				i += speed;
+
+				c.forEach((cyl) => {
+					if (speedSin) 
+						cyl.rotation.set(0,(Math.sin(Date.now()/500)*150)/180*Math.PI,0)
+					else 
+						cyl.rotation.set(0,i/180*Math.PI,0)
+				})
+
+				if (ascii)
+					effect.render(scene, camera);
+				else
+					renderer.render(scene, camera);
+
+				lastTime = Date.now();
+				if (!stop)
+				requestAnimationFrame(render);
+			}
+			stop = false;
+
+			function onResize() {
+				if (inited) {
+					w = window.innerWidth;
+					h = window.innerHeight;
+					camera.aspect = w / h;
+				    camera.updateProjectionMatrix();
+					effect.setSize(w, h);
+					renderer.setSize(w, h);
+				}
+			}
+			onResize();
+
+		</script>
+	</body>
+</html>

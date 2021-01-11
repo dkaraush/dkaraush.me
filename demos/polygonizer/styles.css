@@ -1,0 +1,189 @@
+html, head, body {
+	background: #FAFAFA;
+	font-family: 'Open Sans';
+}
+#main {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	min-height: 100%;
+	padding: 15px 15px 0 15px;
+	box-sizing: border-box;
+	overflow-x: hidden;
+	overflow-y: auto;
+	display: inline-block;
+}
+
+#page1.active {margin-left: 50%;}
+#page2 {margin-left: 200%;}
+
+#page1 {margin-left: -200%;}
+#page2.active {margin-left: 50%;}
+
+#page3 {margin-left: 300%;}
+#page3.active {margin-left: 50%;}
+#page2.nactive {margin-left: -200%;}
+
+.hidden {
+	color: transparent;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+}
+
+#tinycanvas {
+	position: absolute;
+	z-index: -10;
+	opacity: 0;
+	display: none;
+}
+
+.page {
+	position: absolute;
+	margin-left: 50%;
+	transform: translateX(-50%);
+	ms-transform: translateX(-50%);
+	background: white;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	padding: 10px;
+	transition: 1s ease-in-out;
+	max-width: 800px;
+	width: 100%;
+	margin-bottom: 15px;
+}
+
+#page2 canvas {
+	margin: auto;
+	display: block;
+}
+
+#page3 img#result {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+}
+#page3 a#download {
+	vertical-align: middle;
+	float: right;
+	margin-bottom: 0;
+	margin-top: 7px;
+}
+
+@media screen and (max-width: 800px) {
+	.page {
+		box-sizing: border-box;
+		width: 100%;
+		max-width: none;
+		margin: 0;
+		transform: none;
+		ms-transform: none;
+	}
+	#main {
+		padding: 0;
+	}
+	#page1.active {margin-left: 0;}
+	#page2 {margin-left: 125%;}
+	#page1 {margin-left: -125%;}
+	#page2.active {margin-left: 0;}
+	#page3 {margin-left: 250%;}
+	#page3.active {margin-left: 0;}
+}
+
+.page > * {
+	margin-bottom: 10px;
+}
+.page :last-child {
+	margin-bottom: 0px;
+}
+
+.next {
+	display: inline-block;
+	float: right;
+}
+.back {
+	float: left;
+}
+
+p,h1,h2,h3,h4,h5,h6 {
+	margin: 0;
+}
+h3,h4,h5,h6 {
+	font-weight: normal;
+}
+
+.file_upload {
+	position: relative;
+	overflow: hidden;
+	height: 2.1em;
+	font-size: 1em;
+	line-height: 2em;
+	max-width: 25em;
+}
+.file_upload > button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 8em;
+	height: 100%;
+	outline: none;
+	cursor: pointer;
+	transition: all 0.1s ease-in-out;
+	background: #EEEEEE;
+	border: 1px solid #BDBDBD;
+}
+.file_upload > div {	
+	padding-left: 0.5em;
+	border: 1px solid #BDBDBD;
+}
+.file_upload input[type=file] {
+    position: absolute;
+    right: 0;
+    top: 0;
+	height: 100%;
+	width: 8em;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 10;
+}
+.file_upload input[type=file]:after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+.file_upload input[type=file]:hover + button.filebtn {
+	border: 1px solid #039BE5;
+}
+.file_upload input[type=file]:active + button.filebtn {
+	background: #E0E0E0;
+}
+.button {
+	cursor: pointer;
+	padding: 0.25em 0.5em;
+	display: inline-block;
+	transition: all 0.1s ease-in-out;
+	background: #EEEEEE;
+	border: 1px solid #BDBDBD;
+	user-select: none;
+	ms-user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+.button.disabled {
+	background: #9E9E9E;
+	border: 1px solid #616161;
+	cursor: not-allowed;
+}
+.button:hover {
+	border: 1px solid #039BE5;
+}
+.button:active {
+	background: #E0E0E0;
+}
+.button.disabled:hover, .button.disabled:active {
+	background: #9E9E9E !important;
+	border: 1px solid #616161 !important;
+}

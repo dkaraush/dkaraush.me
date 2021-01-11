@@ -1,0 +1,172 @@
+html, head, body {
+	margin: 0;
+	padding: 0;
+	font-family: 'Roboto Mono', Consolas, monospace;
+	background: #FAFAFA;
+}
+* {
+	outline: none;
+	-webkit-tap-highlight-color: transparent;
+
+	user-select: none;
+	-ms-user-select: none;
+	-moz-user-select: none;
+    -khtml-user-select: none;
+	-webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+}
+header {
+	position: relative;
+	padding: 1em;
+	z-index: 1;
+	overflow: hidden;
+}
+header > h3 {
+	margin: 0;
+	z-index: 2;
+	color: #fff;
+}
+header > .bg, header > .bg > * {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+header > .bg {
+	top: -3px;
+	left: -3px;
+	right: -3px;
+	bottom: -3px;
+	padding: 6px;
+	filter: blur(3px);
+	z-index: -1;
+	overflow: hidden;
+}
+header > .bg > .grey {
+	background: rgba(0,0,0,0.5);
+	z-index: 2;
+}
+header > .bg > canvas {
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+}
+main {
+	padding: 1em 1em 0 1em;
+}
+main > h4 {
+	margin: 0 0 1em 0;
+}
+a.demo {
+	display: inline-block;
+	width: 10em;
+	height: 10em;
+	vertical-align: middle;
+	background: rgba(0,0,0,0.2);
+	position: relative;
+	cursor: pointer;
+	margin: 0 1em 1em 0;
+	overflow: hidden;
+}
+@media (orientation: portrait) {
+	a.demo {
+		margin: 0 0 1em 0;
+		width: 45%;
+		height: 0;
+		padding-top: 45%;
+	}
+	a.demo:nth-child(even) {
+		margin-right: 1em;
+	}
+}
+a.demo > .text {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	min-height: 2em;
+	margin: 0;
+	padding: 0.5em;
+	padding-top: 1em;
+	z-index: 3;
+	color: #ffffff;
+	transition: all ease-in-out 0.2s;
+	box-sizing: border-box;
+}
+a.demo > .text > h5 {
+	margin: 0;
+	font-size: 1em;
+}
+a.demo > .text > p {
+	position: absolute;
+	left: 0.75em;
+	right: 0.75em;
+	margin: 0;
+	margin-top: 1em;
+	font-size: 0.75em;
+	opacity: 0;
+	transition: opacity ease-in-out 0.15s;
+}
+a.demo > .grey {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 30%;
+	z-index: 2;
+	background: rgba(0,0,0,0);
+	background: -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.49) 100%);
+	background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(0,0,0,0)), color-stop(100%, rgba(0,0,0,0.49)));
+	background: -webkit-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.49) 100%);
+	background: -o-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.49) 100%);
+	background: -ms-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.49) 100%);
+	background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.49) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#000000', GradientType=0 );
+	transition: all ease-in-out 0.2s;
+	opacity: 1;
+}
+a.demo:hover > .text {
+	min-height: 100%;
+	background: rgba(0,0,0,0.5);
+	padding-top: 0.5em;
+}
+a.demo:hover > .text > p {
+	opacity: 1;
+}
+a.demo:hover > .grey {
+	opacity: 0;
+}
+a.demo > video {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+	transition: all ease-in-out 0.2s;
+}
+a.demo > img {
+	position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+}
+.demo > .wrapper {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	z-index: 5;
+}
+.demo:hover > .wrapper {
+	display: block;
+}

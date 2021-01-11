@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>2d game</title>
+	<style type="text/css">
+		body {
+			background: black;
+		}
+		canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			image-rendering: pixelated;
+		}
+		sprites {
+			display: none;
+		}
+		#pixel-grid {
+			position: absolute;
+			background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAIUlEQVQoU2P8////f0ZGRkYGAoBxVCG+ECIteAgFNkgeAOM9KAcyv5oQAAAAAElFTkSuQmCC);
+			display: none;
+		}
+		canvas#workspace {
+			display: none;
+		}
+	</style>
+</head>
+<body>
+<canvas id="workspace"></canvas>
+<canvas id="main" width='480' height='270'></canvas>
+<div id="pixel-grid"></div>
+
+
+<sprites>
+	{
+		"player": {
+			"type": "multiple",
+			"source": "sprites/player.png",
+			"pivot": {"x": 16, "y": 29},
+			"move_up": 		{"length": 12, 	"x": "i*(w/12)", "y": 0, 		"w": "w/12", "h": "h/5"}, 
+			"move_down": 	{"length": 12, 	"x": "i*(w/12)", "y": "h/5", 	"w": "w/12", "h": "h/5"}, 
+			"move_left": 	{"length": 12, 	"x": "i*(w/12)", "y": "h/5*2", 	"w": "w/12", "h": "h/5"}, 
+			"move_right": 	{"length": 12, 	"x": "i*(w/12)", "y": "h/5*3", 	"w": "w/12", "h": "h/5"},
+			"idle_up": 		{"length": 1, 	"x": 0,  	"y": "h/5*4", "w": "w/12", "h": "h/5"},
+			"idle_down": 	{"length": 1, 	"x": 32, 	"y": "h/5*4", "w": "w/12", "h": "h/5"},
+			"idle_left": 	{"length": 1, 	"x": 64, 	"y": "h/5*4", "w": "w/12", "h": "h/5"},
+			"idle_right":	{"length": 1, 	"x": 96, 	"y": "h/5*4", "w": "w/12", "h": "h/5"},
+			"shadow": 		{"length": 1, 	"x": 128,	"y": "h/5*4", "w": "w/12", "h": "h/5"},
+			"filters": ["silhouetteBlack", "silhouetteWhite"],
+			"collider": {"type": "rect", "x": 9,  "y": 27, "x2": 21, "y2": 32}
+		},
+		"level0_back": {
+			"source": "sprites/level0_back.png",
+			"colliders": [
+				{"type": "rect", "x": 0, 	"y": 0, 	"w": 480, "h": 67},
+				{"type": "rect", "x": 0, 	"y": 0, 	"w": 1,   "h": 270},
+				{"type": "rect", "x": 0, 	"y": 269, 	"w": 480, "h": 1},
+				{"type": "rect", "x": 479, 	"y": 0, 	"w": 1, "h": 270},
+				{"type": "rect", "x": 0, 	"y": 0, 	"w": 78, "h": 127},
+				{"type": "rect", "x": 135, 	"y": 0, 	"x2": 156, "y2": 176},
+				{"type": "rect", "x": 20, 	"y": 176, 	"x2": 86, "y2": 249},
+				{"type": "rect", "x": 205, 	"y": 160, 	"x2": 259, "y2": 259},
+				{"type": "rect", "x": 259, 	"y": 160, 	"x2": 327, "y2": 220}
+			]
+		},
+		"level0_front": {"source": "sprites/level0_front.png"}
+	}
+</sprites>
+
+<script type="text/javascript" src="js/spriteLoader.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+
+</body>
+</html>

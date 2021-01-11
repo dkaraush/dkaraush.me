@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style type="text/css">
+		canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 40%;
+			bottom: 0;
+			width: 60%;
+			height: 100%;
+		}
+		#workspace {
+			position: absolute;
+			top: 0;
+			left: 60%;
+			right: 0;
+			bottom: 0;
+			width: 40%;
+			height: 100%;
+			box-sizing: border-box;
+			overflow: hidden;
+		}
+		#workspace textarea {
+			border: 0;
+			outline: 0;
+			padding: 0;
+			margin: 0;
+			width: 100%;
+			height: 100%;
+		}
+		.CodeMirror {
+			height: 100% !important;
+			width: 100% !important;
+		}
+		#tabs {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			min-height: 30px;
+			background: #f7f7f7;
+			border-bottom: 1px solid #ddd;
+			box-sizing: border-box;
+			padding-left: 10px;
+		}
+		#editor {
+			position: absolute;
+			width: 100%;
+			top: 30px;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+		.tab {
+			min-width: 100px;
+			height: 25px;
+			background: #fff;
+			border-bottom: 1px solid #ddd;
+			margin: 5px 0 0 0;
+			padding: 4px;
+			box-sizing: border-box;
+			cursor: pointer;
+			font-family: monospace;
+			display: inline-block;
+		}
+		.tab.active {
+			background: #ddd;
+		}
+
+		/*.CodeMirror-scroll {
+		  height: auto;
+		  overflow-y: hidden;
+		  overflow-x: auto;
+		*/
+		@media (orientation: portrait) {
+			#workspace {
+				left: 0;
+				top: 60%;
+				bottom: 0;
+				right: 0;
+				width: 100%;
+			}
+			canvas {
+				right: 0;
+				bottom: 40%;
+				width: 100%;
+				height: 60%;
+			}
+		}
+	</style>
+</head>
+<body>
+<canvas></canvas>
+<div id="workspace">
+<div id="tabs">
+	<div class="tab">Example #1</div>
+	<div class="tab">Example #2</div>
+	<div class="tab">Example #3</div>
+	<div class="tab">Example #4</div>
+	<div class="tab">Example #5</div>
+	<div class="tab">Example #6</div>
+	<div class="tab">Example #7</div>
+	<div class="tab">Your code (it will be saved)</div>
+</div>
+<div id="editor">
+<textarea>
+// this code runs every frame
+// it returns a height of each block
+
+// you can animate it, using Date.now(), which returns current time in millis
+
+// x - x coordinate of block
+// y - y coordinate of block
+// w - width of blocks' array
+// h - height of blocks' array
+
+var cx = w/2; // center of animation (x)
+var cy = h/2; // center of animation (y)
+var t = w/4; // period
+var dist = Math.sqrt(Math.pow(x-cx,2)+Math.pow(y-cy,2)) + (Date.now()/100); // distance between center and block
+
+return Math.sin(dist % t / (t/2) * Math.PI)*2+2;
+</textarea>
+</div>
+
+</div>
+<script type="text/javascript">
+</script>
+<script src="examples.js"></script>
+<link rel="stylesheet" href="codemirror.css">
+<script src="codemirror.js"></script>
+<script src="codemirror-js.js"></script>
+<script src="codemirror-wrap.js"></script>
+<script type="text/javascript">
+Object.getOwnPropertyNames(Math).forEach(function(n){window[n]=Math[n]});
+var canvas = document.querySelector('canvas');
+var isWebGL = false;
+var ctx = initGL(canvas.getContext('webgl') || canvas.getContext('experimental-webgl')) || canvas.getContext('2d');
+
+var vertexShader, fragmentShader, program;
+function initGL(G) {
+	if (!G) return null;
+	isWebGL = true;
+	G.shaderSource(vertexShader=G.createShader(35633), "precision highp float;\nattribute vec2 V;\nvoid main() {\n\tgl_Position = vec4(V, 0.0, 1.0) * 2.0 - 1.0;\n}\n");
+	G.compileShader(vertexShader);
+	G.shaderSource(fragmentShader=G.createShader(35632), "precision mediump float;\nuniform vec4 color;\nvoid main() {\n\tgl_FragColor = color;\n}\n");
+	G.compileShader(fragmentShader);
+	G.attachShader(program=G.createProgram(), vertexShader);
+	G.attachShader(program, fragmentShader);
+	G.linkProgram(program);
+	G.useProgram(program);
+	G._cu = G.getUniformLocation(program, 'color');
+	G._vb = G.createBuffer();
+	G.enableVertexAttribArray(G._va=G.getAttribLocation(program,'V'));
+	G.enable(3042);
+	G.blendEquation(32774);
+	G.blendFuncSeparate(770, 771, 1, 771);
+	return G;
+}
+
+var tabs = document.querySelectorAll('.tab');
+var tabSelected = localStorage.tabSelected || 0;
+var textarea = document.querySelector('textarea');
+if (localStorage.savedCode && tabSelected == tabs.length-1)
+	textarea.value = localStorage.savedCode; 
+else
+	textarea.value = examples[tabSelected];
+tabs[tabSelected].className = 'tab active';
+
+var tabsDiv = document.querySelector("#tabs");
+var editorDiv = document.querySelector("#editor");
+var editor = CodeMirror.fromTextArea(textarea, {
+	lineNumbers: true,
+	mode: 'javascript',
+	lineWrapping: true,
+	theme: 'default'
+});
+var codes = examples;
+codes.push(localStorage.savedCode || "// this code runs every frame for each block\n// it has to return a height of each block\n\n// you can animate it, using Date.now(), which returns current time in millis\n\n// hint: it's better to use Math.sin(Date.now()/1000*Math.PI*2)\n// it returns number from -1 to 1 and have \"wave\" effect (see y=sin(x))\n\n// x - x coordinate of block\n// y - y coordinate of block\n\n// w - width of blocks' array\n// h - height of blocks' array\n\n// It's your time!\n\nreturn (x+y)%2; // chess order");
+localStorage.savedCode = codes[codes.length-1];
+
+tabs.forEach(function (tab, i) {
+	tab.addEventListener('click', function () {
+		console.log(i)
+		tabs[tabSelected].className = 'tab';
+		tabSelected = i;
+		tabs[tabSelected].className = 'tab active';
+		editor.setValue(codes[tabSelected]);
+		localStorage.tabSelected = tabSelected;
+		loadFunction();
+	})
+});
+
+var W;
+var H;
+var cubeW = 50;
+function onResize() {
+	var wW = window.innerWidth;
+	var wH = window.innerHeight
+	canvas.width = W = wW * (wW > wH ? 0.6 : 1) * window.devicePixelRatio;
+	canvas.height = H = wH * (wW < wH ? 0.6 : 1)  * window.devicePixelRatio;
+	cubeW = W*0.1*(window.devicePixelRatio/2);
+	cubeH = ((cubeW/2) * Math.cos(angle/180*Math.PI/2)) * 2;
+	editorDiv.style.top = tabsDiv.clientHeight + 'px';
+}
+onResize();
+window.addEventListener('resize', onResize);
+
+function matrix(w,h,c) {
+	var m = [];
+	for (var y = 0; y < h; ++y) {
+		m.push([]);
+		for (var x = 0; x < w; ++x) {
+			m[y].push([]);
+			m[y][x] = c(x, y);
+		}
+	}
+	return m;
+}
+
+var cubes = matrix(20, 20, function(x,y){return Math.sqrt(x)});
+var F = null;
+function loadFunction() {
+	F = function () { return -1; }
+	try {
+		F = new Function("x","y","w","h",'try{\n'+codes[tabSelected]+'\n} catch (e) {return -1}');
+	} catch (e) { /* ... */ }
+}
+loadFunction();
+
+var leftVertices = [], rightVertices = [], topVertices = [];
+function render() {
+	if (isWebGL) {
+		ctx.viewport(0,0,W,H);
+		ctx.clearColor(0,0,0,0);
+  		ctx.clear(ctx.COLOR_BUFFER_BIT);
+	} else
+		ctx.clearRect(0,0,W,H);
+	var d = Math.sqrt(W*W+H*H)*1.5;
+	var w = d / Math.sqrt(Math.pow(cubeW/2,2)+Math.pow(cubeH/2,2));
+	var h = d / Math.sqrt(Math.pow(cubeW/2,2)+Math.pow(cubeH/2,2));
+
+	if (editor.getValue() != codes[tabSelected]) {
+		codes[tabSelected] = editor.getValue();
+		if (tabSelected == codes.length-1)
+			localStorage.savedCode = codes[codes.length-1];
+		loadFunction();
+	}
+
+	leftVertices = [];
+	topVertices = [];
+	rightVertices = [];
+
+	for (var y = 0; y < h; ++y) {
+		for (var x = w-1; x >= 0; --x) {
+			var v = -1;
+			try {
+				v = F(x,y,w,h);
+			} catch (e) {}
+			cube(cubeW/2*(x-w/2)+cubeW/2*(y-h/2)+W/2, cubeH/2*(y-h/2)-cubeH/2*(x-w/2)+H/2, v*cubeH/2);
+		}
+	}
+	requestAnimationFrame(render);
+}
+
+var angle = 100;
+var cubeH = ((cubeW/2) * Math.cos(angle/180*Math.PI/2)) * 2;
+function cube(x, y, h) {
+	var error = h < 0;
+	if (h < 0) h = 1;
+	var points = [[x-cubeW/2,y-h],[x+cubeW/2,y-h],[x,y-h-cubeH],[x,y],[x-cubeW/2,y-h-cubeH/2],[x+cubeW/2,y-h-cubeH/2],x];
+	if (points.filter(function(v){return v[0]>=0&&v[0]<=W&&v[1]>=0&&v[1]<=H}).length == 0)
+		return;
+
+	if (isWebGL) {
+		glF(ctx, ctx.TRIANGLES, [(x-cubeW/2)/W, 1-(y-cubeH/2-h)/H,(x-cubeW/2)/W, 1-(y)/H,(x)/W, 1-(y-h)/H,(x-cubeW/2)/W, 1-(y)/H,(x)/W, 1-(y-h)/H,(x)/W, 1-(y)/H], [0,0.592,0.654,1]);
+
+		glF(ctx, ctx.TRIANGLES, [(x+cubeW/2)/W, 1-(y-cubeH/2-h)/H,(x+cubeW/2)/W, 1-(y)/H,(x)/W, 1-(y-h)/H, (x+cubeW/2)/W, 1-(y)/H,(x)/W, 1-(y-h)/H,(x)/W, 1-(y)/H], [0,0.376,0.392,1]);
+
+
+		glF(ctx, ctx.TRIANGLES, [(x)/W,1-(y-h-cubeH)/H,(x-cubeW/2)/W, 1-(y-cubeH/2-h)/H,(x)/W,1-(y-h)/H,(x)/W,1-(y-h)/H,(x+cubeW/2)/W, 1-(y-cubeH/2-h)/H,(x)/W, 1-(y-cubeH-h)/H], [0.149,0.776,0.854,1]);
+	} else {
+		// left
+		ctx.beginPath();
+		ctx.moveTo(x, y + cubeH/2);
+		ctx.lineTo(x - cubeW/2, y);
+		ctx.lineTo(x - cubeW/2, y - h);
+		ctx.lineTo(x - cubeW/2, y - cubeH/2 - h);
+		ctx.lineTo(x, y - h);
+		ctx.closePath();
+		ctx.fillStyle = error ? '#D32F2F' : '#0097A7';
+		ctx.fill();
+
+		// right
+		ctx.beginPath();
+		ctx.moveTo(x, y + cubeH/2);
+		ctx.lineTo(x + cubeW/2, y);
+		ctx.lineTo(x + cubeW/2, y - h);
+		ctx.lineTo(x + cubeW/2, y - cubeH/2 - h);
+		ctx.lineTo(x, y - h);
+		ctx.closePath();
+		ctx.fillStyle = error ? '#B71C1C' : '#006064';
+		ctx.fill();
+
+		// top
+		ctx.beginPath();
+		ctx.moveTo(x, y - h - cubeH);
+		ctx.lineTo(x - cubeW/2, y - cubeH/2 - h);
+		ctx.lineTo(x, y - h);
+		ctx.lineTo(x + cubeW/2, y - cubeH/2 - h);
+		ctx.closePath();
+		ctx.fillStyle = error ? '#EF5350' : '#26C6DA';
+		ctx.fill();
+	}
+}
+render();
+
+function glF(gl, type, v, color) {
+	gl.bindBuffer(gl.ARRAY_BUFFER, gl._vb);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(v), gl.STREAM_DRAW);
+	gl.vertexAttribPointer(gl._va, 2, gl.FLOAT, false, 0, 0);
+	gl.uniform4fv(gl._cu, color);
+	gl.drawArrays(type, 0, v.length/2);
+}
+</script>
+</body>
+</html>

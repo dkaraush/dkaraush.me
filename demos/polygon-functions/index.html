@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>polygons</title>
+<style type="text/css">
+	canvas {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		width: 100%;
+		height: 100%;
+	}
+</style>
+</head>
+<body>
+<canvas></canvas>
+<script type="text/javascript">
+var canvas = document.querySelector("canvas");
+var ctx = canvas.getContext('2d');
+
+var shapeDiameter = 100;
+var shapeOffset = 15;
+var maxShapesCount = null;
+var values = null;
+var W, H;
+var L = null;
+function onResize() {
+	canvas.width = W = window.innerWidth * window.devicePixelRatio;
+	canvas.height = H = window.innerHeight * window.devicePixelRatio;
+	L = Math.min(W, H) * 0.001;
+	var d = Math.min(W, H) / 5;
+	shapeDiameter = d * 0.9;
+	shapeOffset = d* 0.1;
+
+	maxShapesCount = Math.ceil(Math.min(W,H) / (shapeDiameter+shapeOffset*2));
+	if (values == null) {
+		values = Array.from({length: maxShapesCount}, newShapeValues);
+	} else {
+		if (values.length != maxShapesCount) {
+			if (values.length > maxShapesCount) {
+				values.splice(maxShapesCount, values.length - maxShapesCount);
+			} else {
+				for (var i = values.length; i < maxShapesCount; ++i)
+					values.push(newShapeValues(null, i));
+			}
+		}
+	}
+
+}
+function newShapeValues (x,i) {
+	return {
+		x: [],
+		y: [],
+		a: 0,
+		points: Array.from({length: i+2}, function (y, j) {
+			var a = Math.PI*2/(i+2)*j;
+			return {x: Math.cos(a), y: Math.sin(a), a: a};
+		}),
+		color: randomColor()
+	}
+}
+window.addEventListener("resize", onResize);
+onResize();
+
+function render() {
+	requestAnimationFrame(render);
+
+	ctx.fillStyle = "#000";
+	ctx.fillRect(0,0,W,H);
+
+	ctx.beginPath();
+	ctx.strokeStyle = "rgba(255,255,255,0.25)";
+	ctx.lineWidth = L*2;
+	for (var i = 0; i < values.length; ++i) {
+		ctx.moveTo((i)*(shapeDiameter+shapeOffset*2), (i+1)*(shapeDiameter+shapeOffset*2));
+		ctx.lineTo(W, (i+1)*(shapeDiameter+shapeOffset*2));
+		ctx.moveTo((i+1)*(shapeDiameter+shapeOffset*2), (i)*(shapeDiameter+shapeOffset*2));
+		ctx.lineTo((i+1)*(shapeDiameter+shapeOffset*2), H);
+	}	
+	ctx.stroke();
+
+	for (var i = 0; i < maxShapesCount; ++i) {
+		ctx.beginPath();
+		var c = (shapeDiameter+shapeOffset*2)*(i+0.5);
+		if (i > 0) {
+			for (var j = 0; j < values[i].points.length; ++j) {
+				ctx[j==0?"moveTo":"lineTo"](c + values[i].points[j].x*shapeDiameter/2, 
+											c + values[i].points[j].y*shapeDiameter/2)
+			}
+			ctx.closePath();
+			ctx.lineWidth = L*3;
+			ctx.strokeStyle = values[i].color;
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.arc(c,c,shapeDiameter/2,0,Math.PI*2);
+			ctx.lineWidth = L*1;
+			ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+			ctx.stroke();
+		} else {
+			ctx.beginPath();
+			ctx.arc(c,c,shapeDiameter/2,0,Math.PI*2);
+			ctx.lineWidth = L*3;
+			ctx.strokeStyle = values[i].color;
+			ctx.stroke();
+		}
+
+		var a = values[i].a % (Math.PI*2);
+		var p;
+		if (i > 0) {
+			var g = Math.ceil(a / (Math.PI*2/(i+2)));
+			if (g >= values[i].points.length) g = 0;
+			var u = g-1;
+			if (u < 0) u = values[i].points.length-1;
+
+			p = line_intersect(values[i].points[g].x, values[i].points[g].y,
+							   values[i].points[u].x, values[i].points[u].y,
+							   0, 0,
+							   Math.cos(a), Math.sin(a));
+
+			
+		} else {
+			p = {x: Math.cos(a), y: Math.sin(a)};
+		}	
+
+
+		if (p != null) {
+			values[i].x.push(p.x);
+			values[i].y.push(p.y);
+			ctx.beginPath();
+			ctx.moveTo(c, c);
+			ctx.lineTo(c + p.x*shapeDiameter/2, c + p.y*shapeDiameter/2);
+			ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+			ctx.lineWidth = L*1;
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.arc(c + p.x*shapeDiameter/2, c + p.y*shapeDiameter/2, 3*L, 0, Math.PI*2);
+			ctx.fillStyle = values[i].color;
+			ctx.fill();
+
+			ctx.beginPath();
+			ctx.moveTo(c + p.x*shapeDiameter/2, c + p.y*shapeDiameter/2);
+			ctx.lineTo(c + shapeDiameter/2+shapeOffset, c + p.y*shapeDiameter/2);
+			ctx.moveTo(c + p.x*shapeDiameter/2, c + p.y*shapeDiameter/2);
+			ctx.lineTo(c + p.x*shapeDiameter/2, c + shapeDiameter/2+shapeOffset);
+			ctx.strokeStyle = values[i].color;
+			ctx.lineWidth = L*1;
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.arc(c + shapeDiameter/2+shapeOffset, c + p.y*shapeDiameter/2, 3*L, 0, Math.PI*2);
+			ctx.arc(c + p.x*shapeDiameter/2, c + shapeDiameter/2+shapeOffset, 3*L, 0, Math.PI*2);
+			ctx.fillStyle = values[i].color;
+			ctx.fill();
+		}
+	}
+
+	for (var i = 0; i < values.length; ++i) {
+		var u = (i)*(shapeDiameter+shapeOffset*2);
+		var c = (i+1)*(shapeDiameter+shapeOffset*2);
+
+		ctx.strokeStyle = values[i].color;
+		ctx.lineWidth = L*2;
+
+		// x
+		ctx.beginPath();
+		for (var j = 0; j < values[i].x.length; j++) {
+			ctx.lineTo(u + shapeDiameter/2 + shapeOffset + values[i].x[values[i].x.length-j]*shapeDiameter/2, c + j*3);
+			if (c + j*3 > H) break;
+		}
+		ctx.stroke();
+
+		// y
+		ctx.beginPath();
+		for (var j = 0; j < values[i].y.length; j++) {
+			ctx.lineTo(c + j*3, u + shapeDiameter/2 + shapeOffset + values[i].y[values[i].y.length-j]*shapeDiameter/2);
+			if (c + j*3 > W) break;
+		}
+		ctx.stroke();
+	}
+
+
+	for (var i = 0; i < values.length; ++i) {
+		values[i].a += Math.PI / 100;
+	}
+
+}
+render();
+
+function line_intersect(x1, y1, x2, y2, x3, y3, x4, y4) {
+    // Line AB represented as a1x + b1y = c1 
+    var a1 = y2 - y1; 
+    var b1 = x1 - x2; 
+    var c1 = a1*(x1) + b1*(y1); 
+  
+    // Line CD represented as a2x + b2y = c2 
+    var a2 = y4 - y3; 
+    var b2 = x3 - x4; 
+    var c2 = a2*(x3)+ b2*(y3); 
+  
+    var D = a1*b2 - a2*b1; 
+  
+    if (D == 0) { 
+        return null
+    } else { 
+        var x = (b2*c1 - b1*c2)/D; 
+        var y = (a1*c2 - a2*c1)/D; 
+        return {x:x, y:y}; 
+    } 
+} 
+
+function randomColor() {
+	function h() {
+		var u = (~~(Math.random()*128+75)).toString(16);
+		if (u.length == 1) u = "0" + u;
+		return u;
+	}
+	return "#"+h()+h()+h();
+}
+
+</script>
+</body>
+</html>

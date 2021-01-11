@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Circles</title>
+	<style type="text/css">
+		canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+</head>
+<body>
+<canvas></canvas>
+<script type="text/javascript">
+var canvas = document.querySelector('canvas');
+var ctx = canvas.getContext('2d');
+
+var circleD = 150;
+var circleOffset = 10;
+var circlesX = [];
+var circlesY = [];
+var circles = [];
+
+const circleDetail = 400;
+var W, H;
+function onResize() {
+	canvas.width = W = window.innerWidth * window.devicePixelRatio;
+	canvas.height = H = window.innerHeight * window.devicePixelRatio;
+	var circlesXLength = ~~(W / (circleD+circleOffset*2) - 1);
+	var circlesYLength = ~~(H / (circleD+circleOffset*2) - 1);
+	circlesX = [];
+	circlesY = [];
+	for (var i = 0; i < circlesXLength; ++i)
+		circlesX.push({a: Math.PI, speed: (i+1) * (Math.PI*0.005)});
+	for (var i = 0; i < circlesYLength; ++i)
+		circlesY.push({a: Math.PI, speed: (i+1) * (Math.PI*0.005)});
+
+	circles = [];
+	for (var y = 0; y < circlesYLength; ++y) {
+		circles.push([])
+		for (var x = 0; x < circlesXLength; ++x)
+			circles[y].push({
+				arr: new Array(circleDetail),
+				point: [],
+				closed: false,
+				end: 0,
+				len: 0
+			});
+	}
+}
+window.addEventListener('resize', onResize);
+onResize();
+
+const colors = {
+	background: color("#263238"),
+	circlesGradient: [color("#F44336"), color("#9C27B0"), color("#2196F3"), color("#009688"), color("#4CAF50"), color("#FFEB3B"), color("#FF9800")]
+};
+function colorLerp(a, b, t) {
+	return color([
+			a.raw[0]+(b.raw[0]-a.raw[0])*t,
+			a.raw[1]+(b.raw[1]-a.raw[1])*t,
+			a.raw[2]+(b.raw[2]-a.raw[2])*t,
+			a.raw[3]+(b.raw[3]-a.raw[3])*t
+		]);
+}
+function circleColor(i, n) {
+	i = i / n * (colors.circlesGradient.length-1);
+	var a = ~~i;
+	var b = ~~(i+1);
+	return colorLerp(colors.circlesGradient[a], colors.circlesGradient[b], i - a)
+}
+
+function render() {
+	ctx.fillStyle = colors.background.style;
+	ctx.fillRect(0,0,W,H);
+
+	var oX = (W - ((1+circlesX.length) * (circleD + circleOffset*2))) / 2;
+	var oY = (H - ((1+circlesY.length) * (circleD + circleOffset*2))) / 2;
+	ctx.lineWidth = 2;
+	for (var i = 0; i < circlesX.length; ++i) {
+		ctx.beginPath();
+		ctx.arc(oX+(i+1)*(circleD+circleOffset*2)+circleOffset+circleD/2,
+				oY+circleOffset+circleD/2, circleD/2, 0, Math.PI*2);
+		ctx.strokeStyle = circleColor(i, circlesX.length).style;
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.arc(oX+(i+1)*(circleD+circleOffset*2)+circleOffset+circleD/2 + Math.cos(circlesX[i].a)*(circleD/2),
+				oY+circleOffset+circleD/2 + Math.sin(circlesX[i].a)*(circleD/2), 3, 0, Math.PI*2);
+		ctx.fillStyle = 'white';
+		ctx.fill();
+	}
+	for (var i = 0; i < circlesY.length; ++i) {
+		ctx.beginPath();
+		ctx.arc(oX+circleOffset+circleD/2,
+				oY+(i+1)*(circleD+circleOffset*2)+circleOffset+circleD/2, circleD/2, 0, Math.PI*2);
+		ctx.strokeStyle = circleColor(i, circlesY.length).style;
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.arc(oX+circleOffset+circleD/2 + Math.cos(circlesY[i].a)*(circleD/2),
+				oY+(i+1)*(circleD+circleOffset*2)+circleOffset+circleD/2 + Math.sin(circlesY[i].a)*(circleD/2), 3, 0, Math.PI*2);
+		ctx.fillStyle = 'white';
+		ctx.fill();
+	}
+	ctx.lineWidth = 1;
+	for (var y = 0; y < circlesY.length; ++y) {
+		for (var x = 0; x < circlesX.length; ++x) {
+			var color = colorLerp(circleColor(y, circlesY.length), circleColor(x, circlesX.length), 0.5)
+			ctx.strokeStyle = color.style;
+			var offsetX = oX+(x+1)*(circleD+circleOffset*2)+circleOffset+circleD/2;
+			var offsetY = oY+(y+1)*(circleD+circleOffset*2)+circleOffset+circleD/2;
+			if (circles[y][x].len > 2) {
+				ctx.beginPath();
+				ctx.strokeStyle = color.style;
+				for (var i = 0; i < circles[y][x].len; ++i) {
+					var j = circles[y][x].end - i - 1;
+					if (j < 0) j += circleDetail;
+					ctx[i==0?"moveTo":"lineTo"](offsetX + circles[y][x].arr[j][0], offsetY + circles[y][x].arr[j][1]);
+				}
+				ctx.stroke();
+			}
+
+			if (circles[y][x].point.length == 2) {
+				ctx.beginPath();
+				ctx.arc(offsetX + circles[y][x].point[0],
+						offsetY + circles[y][x].point[1], 2, 0, Math.PI*2);
+				ctx.fillStyle = 'white';
+				ctx.fill();
+			}
+		}
+	}
+
+	ctx.lineWidth = 1;
+	ctx.setLineDash([5,5]);
+	ctx.strokeStyle='rgba(255,255,255,0.25)';
+	for (var i = 0; i < circlesX.length; ++i) {
+		ctx.beginPath();
+		var x = oX+(i+1)*(circleD+circleOffset*2)+circleOffset+circleD/2 + Math.cos(circlesX[i].a)*(circleD/2);
+		var y = oY+circleOffset+circleD/2 + Math.sin(circlesX[i].a)*(circleD/2);
+		ctx.moveTo(x, y);
+		ctx.lineTo(x, H);
+		ctx.stroke();
+	}
+	for (var i = 0; i < circlesY.length; ++i) {
+		ctx.beginPath();
+		var x = oX+circleOffset+circleD/2 + Math.cos(circlesY[i].a)*(circleD/2);
+		var y = oY+(i+1)*(circleD+circleOffset*2)+circleOffset+circleD/2 + Math.sin(circlesY[i].a)*(circleD/2);
+		ctx.moveTo(x, y);
+		ctx.lineTo(W, y);
+		ctx.stroke();
+	}
+	ctx.setLineDash([]);
+
+
+	// next
+	for (var i = 0; i < circlesX.length; ++i)
+		circlesX[i].a += circlesX[i].speed;
+	for (var i = 0; i < circlesY.length; ++i)
+		circlesY[i].a += circlesY[i].speed;
+	for (var y = 0; y < circlesY.length; ++y) {
+		for (var x = 0; x < circlesX.length; ++x) {
+			circles[y][x].point = [Math.cos(circlesX[x].a)*(circleD/2), Math.sin(circlesY[y].a)*(circleD/2)];
+			if (circles[y][x].closed) continue;
+			circles[y][x].arr[circles[y][x].end]=(circles[y][x].point);
+			if (circles[y][x].len < circleDetail-1)
+				circles[y][x].len++;
+			circles[y][x].end++;
+			if (circles[y][x].end == circleDetail)
+				circles[y][x].end = 0;
+
+			///
+			// if (circles[y][x].len > 100)
+			// 	circles[y][x].closed = true;
+		}
+	}
+	//if (Date.now() < 1549637730174)
+	requestAnimationFrame(render);
+}
+render();
+
+function distance(a, b) {
+	return Math.sqrt(Math.pow(a[0]-b[0],2)+Math.pow(a[1]-b[1],2));
+}
+
+function color(hex) {
+	if (typeof hex === 'string') {
+		if (hex[0] == '#')
+			hex = hex.substring(1);
+		var R = parseInt(hex.substring(0, 2), 16);
+		var G = parseInt(hex.substring(2, 4), 16);
+		var B = parseInt(hex.substring(4, 6), 16);
+		var A = 255;
+		if (hex.length >= 8)
+			A = parseInt(hex.substring(6, 8), 16);
+		return {
+			style: 'rgba('+R+','+G+','+B+','+(A/255)+')',
+			raw: [R,G,B,A],
+			alpha: function (a) {
+				var ncolor = this.raw;
+				ncolor[3] = a;
+				return 'rgba('+ncolor.join(',')+')';
+			}
+		}
+	} else if (Array.isArray(hex) && hex.length == 4) {
+		return {
+			style: 'rgba('+Array.from(hex,function(a){return ~~a}).join()+')',
+			raw: hex,
+			alpha: function (a) {
+				var ncolor = this.raw;
+				ncolor[3] = a;
+				return 'rgba('+ncolor.join(',')+')';
+			}
+		}
+	}
+}
+
+</script>
+
+</body></html>

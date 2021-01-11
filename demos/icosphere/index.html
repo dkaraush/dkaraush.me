@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<style type="text/css">
+canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+}
+#ui {
+	position: absolute;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	width: 275px;
+
+	/*background: red;*/
+	z-index: 1;
+	overflow-y: auto;
+	padding: 0.5em 0;
+}
+#ui, #ui button {
+	font-family: 'Source Code Pro', Consolas, monospace !important;
+}
+#ui .uisector-content {
+	margin-left: 1em;
+}
+#ui h3 {
+	margin: 0.25em 0;
+}
+#ui h4, #ui h5 {
+	margin: 0.125em 0;
+}
+#ui .comment {
+	font-size: 0.75em;
+}
+#meshError {
+	color: red;
+	font-size: 0.75em;
+}
+</style>
+</head>
+<body>
+<canvas></canvas>
+<script type="text/javascript" src="perlin.js"></script>
+<script type="text/javascript">
+Object.getOwnPropertyNames(Math).forEach(function(s){window[s]=Math[s]});
+var canvas = document.querySelector('canvas');
+var ctx = canvas.getContext('2d');
+
+var W, H;
+var centerx, centery;
+function onResize() {
+	canvas.width = W = window.innerWidth * window.devicePixelRatio;
+	canvas.height = H = window.innerHeight * window.devicePixelRatio;
+	centerx = W/2;
+	centery = H/2;
+}
+onResize();
+window.addEventListener('resize', onResize);
+
+var shape = {
+		vertices: [ 
+					[0.000000,-1.000000,0.000000],
+					[0.723607,-0.447220,0.525725],
+					[-0.276388,-0.447220,0.850649],
+					[-0.894426,-0.447216,0.000000],
+					[-0.276388,-0.447220,-0.850649],
+					[0.723607,-0.447220,-0.525725],
+					[0.276388,0.447220,0.850649],
+					[-0.723607,0.447220,0.525725],
+					[-0.723607,0.447220,-0.525725],
+					[0.276388,0.447220,-0.850649],
+					[0.894426,0.447216,0.000000],
+					[0.000000,1.000000,0.000000],
+					[-0.162456,-0.850654,0.499995],
+					[0.425323,-0.850654,0.309011],
+					[0.262869,-0.525738,0.809012],
+					[0.850648,-0.525736,0.000000],
+					[0.425323,-0.850654,-0.309011],
+					[-0.525730,-0.850652,0.000000],
+					[-0.688189,-0.525736,0.499997],
+					[-0.162456,-0.850654,-0.499995],
+					[-0.688189,-0.525736,-0.499997],
+					[0.262869,-0.525738,-0.809012],
+					[0.951058,0.000000,0.309013],
+					[0.951058,0.000000,-0.309013],
+					[0.000000,0.000000,1.000000],
+					[0.587786,0.000000,0.809017],
+					[-0.951058,0.000000,0.309013],
+					[-0.587786,0.000000,0.809017],
+					[-0.587786,0.000000,-0.809017],
+					[-0.951058,0.000000,-0.309013],
+					[0.587786,0.000000,-0.809017],
+					[0.000000,0.000000,-1.000000],
+					[0.688189,0.525736,0.499997],
+					[-0.262869,0.525738,0.809012],
+					[-0.850648,0.525736,0.000000],
+					[-0.262869,0.525738,-0.809012],
+					[0.688189,0.525736,-0.499997],
+					[0.162456,0.850654,0.499995],
+					[0.525730,0.850652,0.000000],
+					[-0.425323,0.850654,0.309011],
+					[-0.425323,0.850654,-0.309011],
+					[0.162456,0.850654,-0.499995]
+		],
+		uv: [[1.182837,0.188349],
+[1.012164,0.220451],
+[0.205712,0.361374],
+[0.182837,0.188349],
+[0.302829,0.305648],
+[0.844769,0.199633],
+[0.647021,0.147283],
+[1.394514,0.138073],
+[0.266057,0.493541],
+[0.014969,0.396603],
+[0.107934,0.356550],
+[0.066907,0.539971],
+[0.825352,0.373391],
+[0.921647,0.363687],
+[0.865495,0.531146],
+[0.625323,0.321356],
+[0.730263,0.318231],
+[0.666924,0.479338],
+[0.410045,0.313270],
+[0.518733,0.279677],
+[0.466020,0.456003],
+[0.166924,0.520662],
+[1.014969,0.396603],
+[1.066907,0.539971],
+[0.966020,0.543997],
+[0.766057,0.506459],
+[0.566907,0.460029],
+[0.365495,0.468854],
+[0.125323,0.678644],
+[0.230263,0.681769],
+[0.147021,0.852717],
+[0.910045,0.686730],
+[1.018733,0.720323],
+[0.894514,0.861927],
+[0.705712,0.638626],
+[0.802829,0.694352],
+[0.682837,0.811651],
+[0.514969,0.603397],
+[0.607934,0.643450],
+[0.512164,0.779549],
+[0.325352,0.626609],
+[0.421647,0.636313],
+[0.344769,0.800367],
+[0.012164,0.220451],
+[0.394514,0.138073],
+[0.018733,0.720323],
+[0.493094,0.955367],
+[1.147021,0.852717]],
+		edges: [[0,13],[13,12],[12,0],[1,13],[13,15],[15,1],[12,17],[17,0],[17,19],[19,0],[19,16],[16,0],[15,22],[22,1],[2,14],[14,24],[24,2],[3,18],[18,26],[26,3],[4,20],[20,28],[28,4],[5,21],[21,30],[30,5],[22,25],[25,1],[24,27],[27,2],[26,29],[29,3],[28,31],[31,4],[30,23],[23,5],[6,32],[32,37],[37,6],[7,33],[33,39],[39,7],[8,34],[34,40],[40,8],[9,35],[35,41],[41,9],[10,36],[36,38],[38,10],[38,41],[41,11],[11,38],[36,41],[36,9],[41,40],[40,11],[35,40],[35,8],[40,39],[39,11],[34,39],[34,7],[39,37],[37,11],[33,37],[33,6],[37,38],[32,38],[32,10],[23,36],[10,23],[30,36],[30,9],[31,35],[9,31],[28,35],[28,8],[29,34],[8,29],[26,34],[26,7],[27,33],[7,27],[24,33],[24,6],[25,32],[6,25],[22,32],[22,10],[30,31],[21,31],[21,4],[28,29],[20,29],[20,3],[26,27],[18,27],[18,2],[24,25],[14,25],[14,1],[22,23],[15,23],[15,5],[16,21],[5,16],[19,21],[19,4],[19,20],[17,20],[17,3],[17,18],[12,18],[12,2],[15,16],[13,16],[12,14],[13,14]]
+	};
+
+function upgradeIcosphere() {
+	var nv = Object.assign([], shape.vertices);
+	var ne = Object.assign([], shape.edges);
+	var nu = Object.assign([], shape.uv)
+	for (var e = 0; e < shape.edges.length; ++e) {
+		var o1 = shape.edges[e][0], o2 = shape.edges[e][1];
+		var v1 = shape.vertices[o1];
+		var v2 = shape.vertices[o2];
+		var u1 = shape.uv[o1];
+		var u2 = shape.uv[o2];
+		var v = [
+			(v1[0]+v2[0])/2, (v1[1]+v2[1])/2, (v1[2]+v2[2])/2
+		];
+		var u = [
+			(u1[0]+u2[0])/2, (u1[1]+u2[1])/2
+		];
+		var d = sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]);
+		var V = [
+			v[0]/d, v[1]/d, v[2]/d
+		];
+		nu.push(u);
+		nv.push(V);
+		ne[e] = [o1, nv.length-1];
+		ne.push([nv.length-1, o2]);
+		nu.push()
+	}
+	shape.vertices = nv;
+	shape.edges = ne;
+	shape.uv = nu;
+}
+upgradeIcosphere();
+noise.seed(Math.random())
+var u = Array.from(shape.vertices, function(x,i){
+	var s = noise.simplex3(x[0]/5,x[1]/5,x[2]/5);
+	var o = {
+		v: s*0.5+1,
+		tick: function () {
+			o.v = s*.2+sin(Date.now()/1000*PI+s*PI)*0.025+1;
+		}
+	}
+	return o;
+});
+var c = Array.from(shape.vertices, function (x) {
+	var r = abs(noise.simplex3(x[0]/5,x[1]/5,x[2]/5));
+	return "rgb("+hslToRgb(r, 0.75, 0.5).join()+")";
+});
+function hslToRgb(h, s, l) {
+  var r, g, b;
+
+  if (s == 0) {
+    r = g = b = l; // achromatic
+  } else {
+    function hue2rgb(p, q, t) {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q - p) * 6 * t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      return p;
+    }
+
+    var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    var p = 2 * l - q;
+
+    r = hue2rgb(p, q, h + 1/3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1/3);
+  }
+  return [ r * 255, g * 255, b * 255 ];
+}
+
+var rx = 0, ry = 0;
+var mouseDown = false;
+var lastMouse = {x: 0, y: 0};
+canvas.addEventListener('mousedown', onMouseDown);
+canvas.addEventListener('touchstart', onMouseDown);
+function onMouseDown(e) {
+	mouseDown = true;
+	lastMouse.x = (e.changedTouches || [e])[0].pageX;
+	lastMouse.y = (e.changedTouches || [e])[0].pageY;
+}
+canvas.addEventListener('mouseup', onMouseUp);
+canvas.addEventListener('touchend', onMouseUp);
+function onMouseUp() {
+	mouseDown = false;
+}
+canvas.addEventListener('mousemove', onMouseMove);
+canvas.addEventListener('touchmove', onMouseMove);
+function onMouseMove(e) {
+	var x = (e.changedTouches || [e])[0].pageX;
+	var y = (e.changedTouches || [e])[0].pageY;
+	if (mouseDown) {
+		ry += (lastMouse.x - x)/400*Math.PI;
+		rx -= (lastMouse.y - y)/400*Math.PI;
+	}
+	lastMouse.x = x;
+	lastMouse.y = y;
+}
+
+var rIndex = 1;
+var _rotX = null;
+var _rotY = null;
+var rx = 0, ry = 0;
+
+var t = 0;	
+
+var lastTime = Date.now();
+function render() {
+	requestAnimationFrame(render);
+	t = (Date.now() - lastTime) / 1000;
+	lastTime = Date.now();
+
+	ctx.fillStyle = "#000000";
+	ctx.fillRect(0,0,W,H);
+
+	var sx = Math.min(W,H)/10;
+	var sy = Math.min(W,H)/10;
+
+	var vertices = Array.from(shape.vertices, function (v,i) {
+		return s(r(v, rx, ry), 3*u[i].v);
+	});
+
+	for (var i = 0; i < vertices.length; ++i) {
+		ctx.beginPath();
+		var v = vertices[i];
+		ctx.arc(centerx-v[0]*sx,centery-v[1]*sy,10,0,PI*2);
+		ctx.fillStyle = c[i];
+		ctx.fill();
+	}
+
+	for (var i = 0; i < u.length; ++i) {
+		u[i].tick()
+	}
+}
+render();
+
+function easeInOut(t) {
+	return t<.5 ? 2*t*t : -1+(4-2*t)*t;
+}
+
+function r(v, rx, ry) {
+	return [
+		(v[1]*sin(rx) + v[2]*cos(rx))*sin(ry) + v[0]*cos(ry),
+		v[1]*cos(rx) - v[2]*sin(rx),
+		(v[1]*sin(rx) + v[2]*cos(rx))*cos(ry)-v[0]*sin(ry)
+	];
+}
+function s(v, s) {
+	return [v[0]*s, v[1]*s, v[2]*s];
+}
+
+</script>
+</body>
+</html>

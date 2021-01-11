@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Algorithm Li</title>
+	<style type="text/css">
+		canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+</head>
+<body>
+<canvas></canvas>
+<script type="text/javascript">
+function matrix(h, w, f) {
+	var a = [];
+	for (var y = 0; y < h; ++y) {
+		a.push(Array.from({length: w}, f));
+	}
+	return a;
+}
+
+var canvas = document.querySelector('canvas');
+var ctx = canvas.getContext('2d');
+
+var map = [
+	[1, 0, 0, 0, 0, 0, 0, 0, 0],
+	[1, 1, 1, 0, 0, 1, 1, 1, 0],
+	[1, 0, 0, 0, 0, 1, 1, 0, 0],
+	[0, 0, 0, 1, 0, 1, 0, 0, 1],
+	[0, 0, 0, 1, 0, 1, 1, 0, 0],
+	[1, 0, 0, 1, 0, 1, 0, 1, 0],
+	[1, 0, 1, 1, 1, 1, 0, 0, 0],
+	[1, 0, 1, 1, 0, 1, 0, 0, 1],
+	[1, 0, 1, 0, 0, 0, 0, 0, 0]
+];
+var path = [];
+var num = matrix(map.length, map[0].length, function(){return -1});
+var from = {x: 1, y: 0};
+var to = {x: 5, y: 8}
+
+var W, H;
+var elSize = null;
+function onResize() {
+	canvas.width = W = window.innerWidth * window.devicePixelRatio;
+	canvas.height = H = window.innerHeight * window.devicePixelRatio;
+	var wwidth = map[0].length;
+	var hwidth = map.length;
+	var whmin = Math.min(W, H);
+	elSize = whmin / (Math.min(W/wwidth, H/hwidth) == W/wwidth ? wwidth : hwidth);
+}
+window.addEventListener('resize', onResize);
+onResize();
+
+
+function render() {
+	requestAnimationFrame(render);
+
+	ctx.clearRect(0, 0, W, H);
+
+	var wsize = map[0].length;
+	var hsize = map.length;
+	ctx.strokeStyle = '#000';
+	ctx.fillStyle = '#000';
+	ctx.lineWidth = 1;
+	ctx.font = (elSize/2)+"px monospace";
+	for (var y = 0; y < map.length; ++y) {
+		for (var x = 0; x < map[y].length; ++x) {
+			ctx[map[y][x] ? "fillRect" : "strokeRect"](W/2 - wsize/2*elSize + x*elSize, H/2 - hsize/2*elSize + y*elSize, elSize, elSize);
+			if (x == from.x && y == from.y) {
+				ctx.fillStyle = 'rgba(255,255,0,0.25)';
+				ctx.fillRect(W/2 - wsize/2*elSize + x*elSize, H/2 - hsize/2*elSize + y*elSize, elSize, elSize);
+				ctx.fillStyle = '#000';
+			}
+			if (x == to.x && y == to.y) {
+				ctx.fillStyle = 'rgba(255,0,255,0.25)';
+				ctx.fillRect(W/2 - wsize/2*elSize + x*elSize, H/2 - hsize/2*elSize + y*elSize, elSize, elSize);
+				ctx.fillStyle = '#000';
+			}
+
+			if (map[y][x] == 0)
+				ctx.fillText(num[y][x], W/2 - wsize/2*elSize + x*elSize + elSize/5, H/2 - hsize/2*elSize + y*elSize + elSize/3*2);
+		}
+	}
+
+
+	ctx.fillStyle = 'rgba(255,100,100,0.5)';
+	for (var i = 0; i < path.length; ++i) {
+		var x = path[i].x;
+		var y = path[i].y;
+		ctx.fillRect(W/2 - wsize/2*elSize + x*elSize, H/2 - hsize/2*elSize + y*elSize, elSize, elSize);
+	}
+	
+}
+render();
+
+function step(x, y, d) {
+	if (num[y][x] != -1 || map[y][x]) return;
+	num[y][x] = d;
+
+	// check for end
+	if (x == to.x && y == to.y) {
+		stepsDone();
+		return;
+	}
+
+	var tm = 100;
+	if (x > 0 && !map[y][x-1])
+		setTimeout(function(){step(x-1, y, d+1)}, tm);
+	if (x < map[0].length-1 && !map[y][x+1])
+		setTimeout(function(){step(x+1, y, d+1)}, tm);
+	if (y > 0 && !map[y-1][x]) 
+		setTimeout(function(){step(x, y-1, d+1)}, tm);
+	if (y < map.length-1 && !map[y+1][x])
+		setTimeout(function(){step(x, y+1, d+1)}, tm);
+
+}
+step(from.x, from.y, 0);
+
+function stepsDone() {
+	pathstep(to.x, to.y, num[to.y][to.x])
+}
+function pathstep(x, y, d) {
+	if (d == -1) return;
+	path.push({x: x, y: y});
+	var tm = 100;
+	if (x > 0 && num[y][x-1] == d - 1) {
+		setTimeout(function(){pathstep(x-1, y, d-1)}, tm);
+	} else if (x < map[0].length && num[y][x+1] == d - 1) {
+		setTimeout(function(){pathstep(x+1, y, d-1)}, tm);
+	} else if (y > 0 && num[y-1][x] == d - 1) {
+		setTimeout(function(){pathstep(x, y-1, d-1)}, tm);
+	} else if (x < map.length && num[y+1][x] == d - 1) {
+		setTimeout(function(){pathstep(x, y+1, d-1)}, tm);
+	}
+}
+
+</script>
+</body>
+</html>

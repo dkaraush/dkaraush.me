@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Polygon generator</title>
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&amp;subset=cyrillic" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+	<div id="main">
+		<div class="page active" id="page1">
+			<h1>Upload image</h1>
+			<h3>Upload your image file to make it more polygonal.</h3>
+		
+			<div class="file_upload">
+				<div>No file</div>
+				<input type="file" accept="image/*" onchange="choosed(this.files)">
+				<button class="filebtn">Upload</button>
+			</div>
+
+			<div>Image must be smaller than <b>5000x5000</b> and bigger than <b>100x100</b>.</div>
+			<!--div>We will not steal your image. At least because we do not send images to servers, we use client-side rendering.</div-->
+			<div class="button next disabled">Next</div>	
+		</div>
+		<div class="page" id="page2">
+			<h1>Settings</h1>
+			<canvas></canvas>
+			<div id="controls">
+				<h3>Grid size</h3>
+				<input type="number" min="0.025" max="0.45" step="0.025" id="gridSize"/>
+				<h3>Point move</h3>
+				<input type="number" min="0.1" max="0.6" step="0.025" id="pointMove"/>
+				<div class="button" id="again">Render again</div>
+			</div>
+			<div class="button back">Back</div>
+			<div class="button next">Next</div>
+		</div>
+		<div class="page" id="page3">
+			<h1>Done.</h1>
+			<img id="result">
+			<a id="download" download="result.png">Download</a>
+
+			<div class="button back">Back</div>
+		</div>
+	</div>
+
+	<canvas id="tinycanvas"></canvas>
+
+	<script type="text/javascript" src="rendering.js"></script>
+	<script type="text/javascript">
+		$=function(a){return document.querySelector(a)}
+		var activePage = 0;
+		var pages = Array.from({length: 3}, function (x,i) {return $("#page"+(i+1))});
+		var fileUploadText = $(".file_upload div");
+		var page1next = $("#page1 .next");
+		var page2back = $("#page2 .back");
+		var page2next = $("#page2 .next");
+		var page3back = $("#page3 .back");
+		var canvas = $("#page2 canvas");
+		var tinycanvas = $("#tinycanvas");
+		var ctx = canvas.getContext('2d');
+
+		var cGridSize =  $('#gridSize');
+		var cPointMove = $('#pointMove');
+		var imgResult = $("img#result");
+		var aResult = $("a#download");
+		var againBtn = $("#again");
+
+		var settings = {size: 0.1, move: 0.5};
+		var file = null, 
+			image = null,
+			imageData = null,
+			aspectRatio = null;
+		function choosed(files) {
+			if (files[0]) {
+				image = new Image();
+				image.onload = function () {
+					if (image.width > 5000 || image.height > 5000) {
+						alert("Your image is bigger than 5000x5000");
+						file = null;
+						image = null;
+						page1next.className = "button next disabled";
+						fileUploadText.innerText = "Файл не выбран"
+						return;
+					} else if (image.width < 100 || image.height < 100) {
+						alert("Your image is smaller than 100x100");
+						file = null;
+						image = null;
+						page1next.className = "button next disabled";
+						fileUploadText.innerText = "Файл не выбран"
+						return;
+					}
+
+					aspectRatio = image.width / image.height;
+					file = files[0];
+					fileUploadText.innerText = file.name;
+					page1next.className = "button next";
+					imageData = getImageData(image);
+				}
+				image.src = (window.URL || window.webkitURL).createObjectURL(files[0]);
+			}
+		}
+
+		page1next.onclick = function () {
+			if (!page1next.className.has("disabled")) {
+				switchTo(2);
+				resizeCanvas();
+				prepareControls();
+			}
+		}
+		cGridSize.onchange = cPointMove.onchange = function () {
+			if (activePage == 1) {
+				settings.size = cGridSize.value;
+				settings.move = cPointMove.value;
+				render(canvas, ctx, imageData, settings);
+			}
+		}	
+		againBtn.onclick = function () {
+			if (activePage == 1)
+				render(canvas, ctx, imageData, settings);
+		}
+		page2next.onclick = function () {
+			switchTo(3);
+			tinycanvas.width = image.width;
+			tinycanvas.height = image.height;
+			render(tinycanvas, tinycanvas.getContext("2d"), imageData, settings);
+			aResult.href = imgResult.src = tinycanvas.toDataURL();
+			resizeResultImage();
+		}
+		page2back.onclick = function () {switchTo(1)}
+		page3back.onclick = function () {switchTo(2)}
+
+		document.body.onresize = function () {
+			if (activePage == 1)
+				resizeCanvas();
+			else if (activePage == 2)
+				resizeResultImage();
+		}
+
+		function resizeCanvas() {
+			var maxWidth = pages[1].clientWidth - 20;
+			var maxHeight = (window.innerHeight * 0.6);
+			if (maxWidth / aspectRatio < maxHeight) {
+				canvas.width = maxWidth; /* 20 is padding*/
+				canvas.height = canvas.width / aspectRatio;
+			} else {
+				canvas.height = maxHeight;
+				canvas.width = canvas.height * aspectRatio;
+			}
+
+			render(canvas, ctx, imageData, settings);
+		}
+		function resizeResultImage() {
+			var maxWidth = pages[2].clientWidth - 20;
+			var maxHeight = (window.innerHeight * 0.6);
+			if (maxWidth / aspectRatio < maxHeight)
+				imgResult.width = maxWidth;
+			else
+				imgResult.width = maxHeight * aspectRatio;
+		}
+
+		function prepareControls() {
+			cGridSize.value = settings.size;
+			cPointMove.value = settings.move;
+		}
+
+		function switchTo(num) {
+			activePage = num-1;
+			for (var i = 0; i < pages.length; ++i)
+				pages[i].className = "page";
+			if (num==3)
+				pages[1].className = "page nactive";
+			pages[num-1].className = "page active";
+		}
+
+		function getImageData (image) {
+			tinycanvas.width=image.width;
+			tinycanvas.height=image.height;
+			tinycanvas.getContext("2d").drawImage(image, 0, 0, image.width, image.height);
+			return tinycanvas.getContext("2d").getImageData(0, 0, image.width, image.height);
+		}
+
+		String.prototype.has = function (a) {return this.indexOf(a)>=0;} 
+	</script>
+</body>
+</html>

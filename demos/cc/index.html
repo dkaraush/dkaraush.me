@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>cc</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type="">
+        body, html, head {
+            padding: 0;
+            margin: 0;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        #table {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 150px;
+            height: 200px;
+            background: rgba(0,0,0,0.1);
+            z-index: 2;
+            padding: 10px;
+            font-family: Consolas;
+            font-weight: bold;
+        }
+        #table h1 {
+            margin: 5px 0;
+            font-size: 20px;
+            text-align: center;
+            color: #000;
+        }
+        #player-d {
+            color: rgb(200, 50, 200);
+        }
+        #pacifist-d {
+            color: rgb(50, 200, 50);
+        }
+        #angry-d {
+            color: rgb(200, 50, 50);
+        }
+        #big-d {
+            color: rgb(200, 200, 50);
+        }
+        #baam-d {
+            color: rgb(50, 200, 200);
+        }
+    </style>
+</head>
+<body>
+<div id='table'>
+    <h1>Population</h1>
+    <span id='player-d'>Player: <span id='player'>1</span></span><br>  
+    <span id='pacifist-d'>Pacifist: <span id='pacifist'>1</span></span><br>
+    <span id='angry-d'>Angry: <span id='angry'>1</span></span><br> 
+    <span id='big-d'>Big: <span id='big'>1</span></span><br>   
+    <span id='baam-d'>Baam: <span id='baam'>1</span></span>
+</div>
+<canvas></canvas>
+<script type="">
+    var random = Math.random, sin = Math.sin, cos = Math.cos, atan2 = Math.atan2, sqrt = Math.sqrt, round = Math.round, PI = Math.PI, pow = Math.pow;
+    Array.prototype.random = function () {
+        return this[round(random()*(this.length-1))];
+    }
+    String.prototype.random = function () {
+        return this[round(random()*(this.length-1))];
+    }
+    function randomString(n) {
+        return Array.from({length: n||16}, function (x, i) {
+            return 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890'.random();
+        }).join('')
+    }
+ 
+    var canvas = document.querySelector('canvas');
+    var ctx = canvas.getContext('2d');
+    var W, H;
+    function onResize() {
+        canvas.width = W = window.innerWidth;
+        canvas.height = H = window.innerHeight;
+    }
+    window.addEventListener('resize', onResize);
+    onResize();
+ 
+    var MOUSE = [W/2, H/2];
+    var INPUT = {};
+    window.addEventListener('keydown', function (e) {
+        INPUT[e.code.toUpperCase()] = true;
+    });
+    window.addEventListener('keyup', function (e) {
+        INPUT[e.code.toUpperCase()] = false;
+    });
+    window.addEventListener('mousemove', function (e) {
+        MOUSE[0] = e.clientX;
+        MOUSE[1] = e.clientY;
+    });
+    window.addEventListener('mousedown', function (e) {
+        INPUT[(['LEFT', 'MIDDLE', 'RIGHT'])[e.button]] = true;
+    });
+    window.addEventListener('mouseup', function (e) {
+        INPUT[(['LEFT', 'MIDDLE', 'RIGHT'])[e.button]] = false;
+    });
+ 
+    var bullets = [];
+    var types = {
+        'player': {
+            color: [200, 50, 200],
+            tick: function (c, nearest) {
+                var sp = (!!INPUT.KEYW-0) - (!!INPUT.KEYS-0);
+ 
+                c.dir = atan2(MOUSE[0] - c.x, MOUSE[1] - c.y);
+                c.x += sin(c.dir)*sp*2;
+                c.y += cos(c.dir)*sp*2;
+ 
+                if ((INPUT.LEFT || INPUT.SPACE) && Date.now()-c.l > 150) {
+                    bullets.push({
+                        from: c.id,
+                        x: c.x + sin(c.dir)*15,
+                        y: c.y + cos(c.dir)*15,
+                        dir: c.dir,
+                        damage: 0.1,
+                        speed: 2,
+                        type: c.type
+                    });
+                    c.l = Date.now();
+                }
+            }
+        },
+        'pacifist': {
+            color: [50, 200, 50],
+            vdist: 400,
+            tick: function (c, nearest, nbull) {
+                if (nbull && nbull.dist < 200) {
+                    c.dir = atan2(c.x - nbull.x, c.y - nbull.y);
+                    c.x += sin(c.dir)*(2-nbull.dist/200);
+                    c.y += cos(c.dir)*(2-nbull.dist/200);
+                } else if (nearest && nearest.type != 'pacifist') {
+                    c.dir = atan2(c.x - nearest.x, c.y - nearest.y);
+                    c.x += sin(c.dir)*(2-nearest.dist/200);
+                    c.y += cos(c.dir)*(2-nearest.dist/200);
+                }
+            }
+        },
+        'angry': {
+            color: [200, 50, 50],
+            vdist: 150,
+            tick: function (c, nearest, nbull) {
+                if (nbull && nbull.dist < 200) {
+                    c.dir = atan2(c.x - nbull.x, c.y - nbull.y);
+                    c.x += sin(c.dir)*(2-nbull.dist/200);
+                    c.y += cos(c.dir)*(2-nbull.dist/200);
+                } else if (nearest) {
+                    c.dir = atan2(nearest.x - c.x, nearest.y - c.y);
+                    c.x += sin(c.dir)*2;
+                    c.y += cos(c.dir)*2;
+ 
+                    if (Date.now()-c.l > 150) {
+                        bullets.push({
+                            from: c.id,
+                            x: c.x + sin(c.dir)*15,
+                            y: c.y + cos(c.dir)*15,
+                            dir: c.dir,
+                            damage: 0.1,
+                            type: c.type
+                        });
+                        c.l = Date.now();
+                    }
+                }
+ 
+            }
+        },
+        'big': {
+            color: [200, 200, 50],
+            vdist: 500,
+            tick: function (c, nearest, nbull) {
+                if (nbull && nbull.dist < 200) {
+                    c.dir = atan2(c.x - nbull.x, c.y - nbull.y);
+                    c.x += sin(c.dir)*(2-nbull.dist/200);
+                    c.y += cos(c.dir)*(2-nbull.dist/200);
+                } else if (nearest) {
+                    c.dir = atan2(nearest.x - c.x, nearest.y - c.y);
+                    c.x += sin(c.dir)*2;
+                    c.y += cos(c.dir)*2;
+ 
+                    if (Date.now()-c.l > 1500) {
+                        bullets.push({
+                            from: c.id,
+                            x: c.x + sin(c.dir)*15,
+                            y: c.y + cos(c.dir)*15,
+                            dir: c.dir,
+                            damage: 0.25,
+                            speed: 0.75,
+                            type: c.type
+                        });
+                        c.l = Date.now();
+                    }
+                }
+ 
+            }
+        },
+        'baam': {
+            color: [50, 200, 200],
+            vdist: 200,
+            tick: function (c, nearest, nbull) {
+                if (nbull && nbull.dist < 200) {
+                    c.dir = atan2(c.x - nbull.x, c.y - nbull.y);
+                    c.x += sin(c.dir)*(2-nbull.dist/200);
+                    c.y += cos(c.dir)*(2-nbull.dist/200);
+                } else if (nearest) {
+                    c.dir = atan2(nearest.x - c.x, nearest.y - c.y);
+                    c.x += sin(c.dir)*2;
+                    c.y += cos(c.dir)*2;
+ 
+                    if (Date.now()-c.l > 1000) {
+                        for (var i = 0; i < 10; ++i) {
+                            bullets.push({
+                                from: c.id,
+                                x: c.x + sin(c.dir)*15,
+                                y: c.y + cos(c.dir)*15,
+                                dir: c.dir+((5-i)/5*(PI/180*15)),
+                                damage: 0.01,
+                                speed: 1.5,
+                                type: c.type
+                            });
+                        }
+                        c.l = Date.now();
+                    }
+                }
+ 
+            }
+        }
+    }
+    var creatures = [];
+    for (var i = 0; i < round((W*H)/(125*125)); ++i) {
+        creatures.push(newCreature(undefined, i));
+    }
+    function newCreature(type, i) {
+        if (i == 0) {
+            return {
+                type: 'player',
+                x: W/2,
+                y: H/2,
+                dir: random()*PI*2,
+                health: 1,
+                l: Date.now(),
+                id: randomString(),
+                im: 1
+            }
+        }
+        var x = random()*(W-30)+15;
+        var y = random()*(H-30)+15;
+        while (collide(x, y)) {
+            x = random()*(W-30)+15;
+            y = random()*(H-30)+15;
+        }
+        return {
+            type: type||Object.keys(types).filter(function(t){return t!='player'}).random(),
+            x: x,
+            y: y,
+            dir: random()*PI*2,
+            health: 1,
+            l: Date.now(),
+            id: randomString(),
+            im: 1
+        }
+    }
+    function collide(x, y) {
+        for (var i = 0; i < creatures.length; ++i) {
+            var G = creatures[i];
+            if (sqrt(pow(G.x-x,2)+pow(G.y-y,2))<30)
+                return true;
+            if (sqrt(pow(G.x-x,2)+pow(G.y-y,2))<30)
+                return true;
+        }
+        return false;
+    }
+ 
+    var lastTime = Date.now();
+    function render() {
+        var P = 60 / (1000/(Date.now()-lastTime));
+        lastTime = Date.now();
+        ctx.strokeStyle = 'black';
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, W, H);
+        ctx.strokeRect(1, 1, W-1, H-1);
+ 
+        for (var i = 0; i < creatures.length; ++i) {
+            var C = creatures[i];
+            var cc = types[C.type].color;
+            var sc = Array.from(cc, function (x) {return x-50<0?0:x-50;});
+            var oc = 'rgba('+cc.join()+','+(1-C.im)+')';
+            var os = 'rgba('+sc.join()+','+(1-C.im)+')';
+ 
+            ctx.lineWidth = 1;
+            ctx.fillStyle = oc;
+            ctx.strokeStyle = os;
+            ctx.beginPath();
+            ctx.moveTo(C.x, C.y);
+            ctx.arc(C.x, C.y, 15, 0, PI*2*C.health);
+            ctx.lineTo(C.x, C.y);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(C.x, C.y, 15, 0, PI*2);
+            ctx.stroke();
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(C.x, C.y);
+            ctx.lineTo(C.x + sin(C.dir)*15, C.y + cos(C.dir)*15);
+            ctx.stroke();
+ 
+            if (C.im > 0) {
+                ctx.strokeStyle = 'rgba('+sc.join()+','+C.im+')';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(C.x, C.y, 15 + (1-C.im)*20, 0, PI*2);
+                ctx.stroke();
+            }
+        }
+ 
+        ctx.fillStyle = '#D84315';
+        for (var i = 0; i < bullets.length; ++i) {
+            var b = bullets[i];
+            ctx.fillStyle = 'rgb('+types[b.type].color.join()+')';
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, b.damage < 0.1 ? 2 : b.damage*30, 0, PI*2);
+            ctx.fill();
+        }
+ 
+        // tick
+        for (var u = 0; u < bullets.length; ++u) {
+            var B = bullets[u];
+            var r = B.damage < 0.1 ? 2 : B.damage*30;
+            var k = false;
+            for (var c = 0; c < creatures.length; ++c) {
+                var C = creatures[c];
+                if (B.from == C.id || C.im != 0) continue;
+                var dist = sqrt(pow(C.x - B.x, 2) + pow(C.y - B.y, 2));
+                if (dist <= (15+r)) {
+                    C.health -= B.damage;
+                    bullets.splice(u, 1);
+                    k = true;
+                    u--;
+                    if (C.health <= 0) {
+                        if (C.type == 'player')
+                            creatures.push(newCreature('player'));
+                        else
+                            creatures.push(newCreature(B.type=='player'?C.type:B.type));
+                        creatures.splice(c, 1);
+                    }
+                    break;
+                }
+            }
+            if (!k) {
+                B.x += sin(B.dir)*4*(B.speed||1);
+                B.y += cos(B.dir)*4*(B.speed||1);
+                if (B.x < 0 || B.x > W || B.y < 0 || B.y > H)
+                    bullets.splice(u, 1);
+            }
+        }
+        for (var c = 0; c < creatures.length; ++c) {
+            var C = creatures[c];
+            var f = types[C.type].tick;
+            var vdist = types[C.type].vdist || 150;
+            if (typeof f !== 'function') {
+                continue;
+            }
+            var nearest = null, nval = -1;
+            for (var h = 0; h < creatures.length; ++h) {
+                if (c == h) continue;
+                var dist = sqrt(pow(C.x - creatures[h].x, 2) + pow(C.y - creatures[h].y, 2));
+                if (dist > vdist) continue;
+                if (dist < nval || nval == -1) {
+                    nearest = Object.assign(creatures[h], {dist: dist});
+                    nval = dist;
+                }
+            }
+            var nbull = null;
+            nval = -1;
+            for (var h = 0; h < bullets.length; ++h) {
+                if (bullets[h].from == C.id) continue;
+                var dist = sqrt(pow(C.x - bullets[h].x, 2) + pow(C.y - bullets[h].y, 2));
+                if (dist > vdist) continue;
+                if (dist < nval || nval == -1) {
+                    nbull = Object.assign(bullets[h], {dist: dist});
+                    nval = dist;
+                }
+            }
+            var wasX = C.x;
+            var wasY = C.y;
+            f(C, nearest, nbull);
+            var wx = false, wy = false;
+            if (C.x < 15 || C.x > W-15) {
+                C.x = wasX;
+                wx = true;
+            }
+            if (C.y < 15 || C.y > H-15) {
+                C.y = wasY;
+                wy = true;
+            }
+            if (!wx || !wy) {
+                for (var i = 0; i < creatures.length; ++i) {
+                    if (i == c) continue;
+                    var G = creatures[i];
+                    if (!wx && (sqrt(pow(G.x-C.x,2)+pow(G.y-C.y,2))<30 ||
+                                sqrt(pow(G.x-C.x,2)+pow(G.y-wasY,2))<30)) {
+                        wx = true;
+                        C.x = wasX;
+                    }
+                    if (!wy && (sqrt(pow(G.x-C.x,2)+pow(G.y-C.y,2))<30 ||
+                                sqrt(pow(G.x-wasX,2)+pow(G.y-C.y,2))<30)) {
+                        wy = true;
+                        C.y = wasY;
+                    }
+ 
+                    if (wx && wy)
+                        break;
+                }
+            }
+ 
+            if (C.im > 0) {
+                C.im -= 0.01*P;
+                if (C.im < 0)
+                    C.im = 0;
+            }
+        }
+        var ui = {};
+        for (var k in types)
+            ui[k] = 0;
+        for (var i = 0; i < creatures.length; ++i) {
+            var t = creatures[i].type;
+            ui[t]++;
+        }
+        for (var k in ui) {
+            document.querySelector('#'+k).innerHTML = ui[k];
+        }
+ 
+ 
+        requestAnimationFrame(render);
+    }
+    render();
+</script>
+</body>
+</html>

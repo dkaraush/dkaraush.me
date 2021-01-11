@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>EnterThePassword Background</title>
+	<style>
+		body, head, html {
+			margin: 0;
+			padding: 0;
+		}
+		#bg {
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+			z-index: -1;
+		}
+	</style>
+</head>
+<body id="body" onresize="onResize()">
+	<canvas id="bg"></canvas>
+	<script>
+		var DEBUG = false;
+
+		function module(a) {return (a < 0 ? -a : a)};
+
+		var canvas = document.getElementById("bg");
+		var ctx = canvas.getContext("2d");
+
+		maxspeed = 0.3;		
+		WIDTH =  canvas.width  = window.innerWidth;
+		HEIGHT = canvas.height = window.innerHeight;
+
+		function onResize() {
+			
+			CURRENT_WIDTH =  canvas.width  = window.innerWidth;
+			CURRENT_HEIGHT = canvas.height = window.innerHeight;
+			
+			for (var i = 0; i < pointsCount; i++) {
+				points[i].x = points[i].x/WIDTH*CURRENT_WIDTH;
+				points[i].y = points[i].y/HEIGHT*CURRENT_HEIGHT;
+			}
+
+			HEIGHT = CURRENT_HEIGHT;
+			WIDTH = CURRENT_WIDTH;
+		}
+
+		var points = [];
+		var pointsCount = ~~((WIDTH*HEIGHT)/(75*75));
+		for (var i = 0; i < pointsCount-1; i++) {
+			c = [];
+			clen = (~~(Math.random()*(pointsCount/3))+3)-1;
+			for (var j = 0; j < clen; j++)
+				c += ~~(Math.random()*pointsCount);
+			points[i] = {
+				x: 		~~(Math.random()*WIDTH),
+				y: 		~~(Math.random()*HEIGHT),
+				xp: 	  (Math.random()*maxspeed*2)-maxspeed,
+				yp: 	  (Math.random()*maxspeed*2)-maxspeed,
+				r: 		~~(Math.random()*2.5)+1.25,
+				connect: c
+			};
+		}
+		
+		var c = [];
+		for (var i = 0; i < pointsCount-1; i++)
+			c.push(i);
+		points[pointsCount-1] = {x:0,y:0,xp:0,yp:0,r:1,connect:c};
+
+		document.getElementById("body").addEventListener("mousemove", function (e) {
+			points[pointsCount-1].x = e.clientX;
+			points[pointsCount-1].y = e.clientY;
+		}, false);
+		function draw() {
+			ctx.fillStyle = "black";
+			ctx.fillRect(0,0,WIDTH,HEIGHT);
+			ctx.fillStyle = "white";
+			for (var i = 0; i < pointsCount; i++) {
+				var point = points[i];
+				for (var j = i+1; j < pointsCount; j++) {
+					pointf = points[j];
+					len = Math.sqrt((point.x-pointf.x)*(point.x-pointf.x)+(point.y-pointf.y)*(point.y-pointf.y));
+					if (len > 150)
+						continue;
+					ctx.beginPath();
+					ctx.moveTo(point.x, point.y);
+					ctx.lineTo(pointf.x, pointf.y);
+					ctx.strokeStyle = "rgba(255,255,255,"+(1-len/150)+")";
+					ctx.stroke();
+				}	
+			}
+			for (var i = 0; i < pointsCount; i++) {
+				point = points[i];
+				ctx.beginPath();
+				ctx.arc(point.x, point.y, point.r, 0, 2*Math.PI);
+				ctx.fill();
+				point.x += point.xp;
+				point.y += point.yp;
+				if (point.x > WIDTH || point.x < 0 ||
+					point.y > HEIGHT || point.y < 0) {
+
+					point.xp = -point.xp;
+					point.yp = -point.yp;
+
+					// points.splice(i,1);
+					// c = [];
+					// clen = ~~(Math.random()*(pointsCount/3))+3;
+					// for (var j = 0; j < clen; j++)
+					// 	c += ~~(Math.random()*pointsCount);
+					// points.push({
+					// 	x: 		~~(Math.random()*WIDTH),
+					// 	y: 		~~(Math.random()*HEIGHT),
+					// 	xp: 	(Math.random()*2)-1,
+					// 	yp: 	(Math.random()*2)-1,
+					// 	r: 		~~(Math.random()*2.5)+1.25,
+					// 	connect: c
+					// })
+				}
+
+			}
+
+			requestAnimationFrame(draw);
+		}
+		requestAnimationFrame(draw);
+	</script>
+</body>
+</html>

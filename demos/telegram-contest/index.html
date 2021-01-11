@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="shortcut icon" href="favicon.png" type="image/png">
+	<title>Telegram Contest App</title>
+	<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+	<script type="text/javascript">
+		var html = document.querySelector('html');
+		var night = false;
+		if (['true','false'].indexOf(localStorage.night)>=0)
+			night = localStorage.night == 'true';
+		html.className = night ? 'night' : '';
+	</script>
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+	<!-- 
+		Chart App for March Telegram Contest
+		Author: dkaraush@gmail.com
+
+		WebGL + Canvas (2D Context)
+		/* 
+			If webgl is not supported, it will use full canvas.
+			Chart is rendered with triangles (polygons) to draw lines with some width.
+			However, if there are many points in chart, it will draw with simple thin lines.
+		*/
+		Segment Tree (Maximum Range Query)
+		/*
+			It is used to find max of chart segment, which is on display.
+			For large charts it is perfect, but not for this data, actually. For-loop would be much faster.
+		*/
+	-->
+	<div id="wrapper">
+		<div id='switcher'>Switch to <span><script>document.write(night?'Day':'Night')</script></span> Mode</div>
+	</div>
+	<script type="text/javascript" src="main.min.js"></script>
+</body>
+</html>

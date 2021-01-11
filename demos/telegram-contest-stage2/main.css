@@ -1,0 +1,362 @@
+body {
+	margin: 0;
+	padding: 0;
+	font-family: 'Roboto', 'Helvetica Neue', Arial, Verdana, sans-serif;
+}
+* {
+	-webkit-tap-highlight-color: transparent;
+	transition-duration: 0.2s;
+	transition-timing-function: ease-in-out;
+	transition-property: background, color;
+}
+body, #switch-mode {
+	background: #FAFAFA;
+	transition-property: color, background, box-shadow;
+}
+body.Night,
+body.Night #switch-mode,
+body.Night div.hover {
+	background: #242F3E;
+}
+body.Night {
+	color: #F8F8F8;
+}
+#main {
+	max-width: 720px;
+	width: 100%;
+	margin: 0 auto;
+	padding-bottom: 4em;
+}
+.chart {
+	box-sizing: border-box;
+	width: 100%;
+	padding: 15px;
+	position: relative;
+	transition-duration: 0.2s;
+	transition-delay: 0;
+	transition-timing-function: ease-in-out;
+	transition-property: padding-bottom;
+}
+.chart h3 {
+	margin: 0;
+}
+.chart > .header {
+	position: relative;
+	width: 100%;
+	height: 40px;
+	line-height: 100%;
+	vertical-align: middle;
+	display: inline-block;
+}
+.chart > .header * {
+	color: #000000;
+	position: absolute;
+	transition-delay: 0s;
+	transition-duration: 0.2s;
+	transition-property: color, top, opacity, font-size, padding, line-height, background-size;
+	width: 60%;
+	vertical-align: middle;
+	display: inline-block;
+	transform: translateY(-50%);
+}
+body.Night .chart .header * {
+	color: #F8F8F8;
+}
+.chart > .header .date,
+.chart > .header .date-zoomed {
+	right: 0;
+}
+.zoom-out {
+	background-image: url('zoom-out.png');
+	background-repeat: no-repeat;
+	background-position: 2px center;
+	background-size: 15px;
+	left: 0;
+	color: #108BE3 !important;
+	min-height: 20px;
+	padding-left: 16px;
+	line-height: 15px;
+	vertical-align: middle;
+	top: 10px;
+	font-size: 50%;
+	user-select: none;
+	-ms-user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	width: 35% !important;
+}
+.date, .heading, .chart.zoomed .date-zoomed, .chart.zoomed .zoom-out {
+	top: 50%;
+}
+.date, .chart.zoomed .date-zoomed, .chart.zoomed .heading, .zoom-out {
+	opacity: 0;
+}
+.heading {
+	font-size: 120%;
+	width: 40% !important;
+}
+.date {
+	opacity: 1;
+	font-size: 80%;
+	text-align: right;
+}
+.date-zoomed {
+	opacity: 0;
+	top: 70%;
+	font-size: 50%;
+	text-align: right;
+}
+.chart.zoomed .date {
+	top: -10px;
+	font-size: 50%;
+	opacity: 0;
+}
+.chart.zoomed .date-zoomed {
+	opacity: 1;
+	font-size: 80%;
+}
+.chart.zoomed .heading {
+	top: 20%;
+	font-size: 50%;
+}
+.chart.zoomed .zoom-out {
+	opacity: 1;
+	font-size: 100%;
+	min-height: 30px;
+	padding-left: 32px;
+	line-height: 30px;
+	background-size: 30px;
+	cursor: pointer;
+}
+#switch-mode {
+	position: fixed;
+	z-index: 10;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 1em;
+	text-align: center;
+	color: #36A8F0;
+	cursor: pointer;
+	user-select: none;
+	box-shadow: 0 -1px 2px rgba(0,0,0,0.2);
+}
+#switch-mode.no-shadow {
+	box-shadow: none;
+}
+.content {
+	position: relative;
+	width: 100%;
+	height: 20em;
+	margin-bottom: 1em;
+}
+.content canvas {
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+	position: absolute;
+}
+.content .slider {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 3em;
+	z-index: 2;
+	user-select: none;
+	-ms-user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	opacity: 1;
+	transition-property: transform, opacity;
+	transition-duration: 0.2s;
+	transition-timing-function: linear;
+	transform: scale(1);
+}
+.content .slider.hide {
+	transform: scale(0);
+	opacity: 0;
+}
+.slider > span {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	transition: background ease-in-out 0.2s;
+}
+.slider > span.btn {
+	border-color: #C0D1E1;
+	border-style: solid;
+	border-left-width: 10px;
+	border-right-width: 10px;
+	border-top-width: 1px;
+	border-radius: 5px;
+	margin-left: -10px;
+	z-index: 3;
+	transition: border-color ease-in-out 0.2s;
+}
+body.Night .slider > span.btn {
+	border-color: #56626D;
+}
+.slider > span.bg {
+	background: #E2EEF9;
+	opacity: 0.6;
+}
+body.Night .slider > span.bg {
+	background: #304259;
+	opacity: 0.6;
+}
+.slider .btn > span {
+	position: absolute;
+	width: 0.15em;
+	height: 0.7em;
+	border-radius: 0.15em;
+	background: #FFFFFF;
+	top: 1.1em;
+}
+.slider .btn > span:nth-child(1) {
+    left: -6px;
+}
+.slider .btn > span:nth-child(2) {
+	right: -6px;
+}
+.checkboxes {
+	width: 100%;
+	transition-property: opacity;
+}
+.checkbox {
+	box-sizing: border-box;
+	display: inline-block;
+	padding: 0.35em 1em 0.35em 2.5em;
+	height: 2.25em;
+	border-radius: 5em;
+	border: solid 1px #000000;
+	position: relative;
+	cursor: pointer;
+	margin: 0 0.5em 0.5em 0;
+	overflow: hidden;
+	user-select: none;
+}
+.checkbox.not-checked {
+	background-color: transparent !important;
+}
+.checkbox .checker {
+	display: inline-block;
+	position: absolute;
+	width: 1.5em;
+	top: 0;
+	left: 0.5em;
+	bottom: 0;
+	transform: scale(0.5);
+	opacity: 0;
+	transition: all ease-in-out 0.2s;
+}
+.checkbox span.label {
+    margin-left: -0.75em;
+    padding-right: 0.75em;
+    transition: all ease-in-out 0.2s;
+    vertical-align: middle;
+    line-height: 100%;
+    display: inline-block;
+}
+
+.checkbox.checked span.label {
+    margin: 0;
+    padding: 0;
+    color: #FFFFFF !important;
+    z-index: 3;
+}
+.checker span:nth-child(1) {
+    position: absolute;
+    width: 0.125em;
+    height: 0.45em;
+    border-radius: 1em;
+    transform: rotate(-45deg);
+    bottom: 0.66em;
+    left: 0.45em;
+}
+
+.checker span:nth-child(2) {
+    position: absolute;
+    width: 0.125em;
+    height: 1em;
+    border-radius: 1em;
+    transform: rotate(40deg);
+    left: 0.9em;
+    bottom: 0.6em;
+}
+
+.checkbox.checked .checker {
+    transform: scale(1);
+    opacity: 1;
+}
+
+
+.checkbox.checked .checker span {
+    background: #FFFFFF;
+}
+.checkbox .bg {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    transition: opacity ease-in-out 0.2s;
+    opacity: 0;
+    z-index: -1;
+}
+.checkbox.checked .bg {
+	opacity: 1;
+}
+div.hover {
+    z-index: 2;
+    position: absolute;
+    background: rgba(250, 250, 250, 0.95);
+    border-radius: 0.5em;
+    display: inline-block;
+    padding: 0.4em 0.75em;
+    font-size: 0.8em;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+    transition-property: background;
+    transition-delay: 0s;
+    white-space: nowrap;
+    top: 1.5em;
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+.hover > .percents,
+.hover > .values {
+    font-weight: bold;
+}
+.hover > .values {
+    float: right;
+}
+.hover > span {
+    display: inline-block;
+    padding-right: 0.5em;
+    text-overflow: ellipsis;
+}
+.hover > span:last-child {
+    padding: 0;
+}
+div.hover * {
+	transition-delay: 0s;
+	transition-duration: 0.2s;
+    transition-property: color;
+    transition-timing-function: ease-in-out;
+}
+body.Night div.hover {
+    background: rgba(36, 47, 62, 0.95);
+}
+.hover h4 {
+    margin: 0;
+}
+
+.hover > div > span {
+    float: right;
+   	text-align: right;
+    min-width: 2em;
+    text-overflow: ellipsis;
+
+}

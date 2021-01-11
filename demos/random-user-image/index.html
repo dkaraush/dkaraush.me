@@ -1,0 +1,46 @@
+<canvas width=128 height=128></canvas>
+<script type="text/javascript">
+
+let W = 128, H = 128;
+let canvas = document.querySelector('canvas');
+let ctx = canvas.getContext('2d');
+
+ctx.beginPath();
+ctx.arc(W/2, H/2, W/2, 0, Math.PI*2);
+ctx.clip();
+
+ctx.fillStyle = randomColor(x => 200+x);
+ctx.fillRect(0, 0, W, H);
+
+
+let p = W * 0.15;
+let n = Math.round(2 + Math.random() * 3) * 2;
+let data = Array.from({length: n}, (_, x) => Array.from({length: n}, (_, y) => {
+	return Math.random() > 0.5;
+}));
+
+ctx.fillStyle = randomColor(x => x-100)
+for (let y = 0; y < n; ++y)
+	for (let x = 0; x < n; ++x)
+		if (data[y][x >= (n/2) ? n-x-1 : x])
+			ctx.fillRect(Math.ceil(p + (W-p*2) / n * x), 
+						 Math.ceil(p + (H-p*2) / n * y), 
+						 Math.ceil((W-p*2) / n), 
+						 Math.ceil((H-p*2) / n));
+ctx.restore();
+
+function range(x, min, max) {
+	return Math.max(Math.min(x, max), min);
+}
+function randomColor(f) {
+	return '#' + Array.from({length: 3}, () => {
+		let n = Math.random() * 255;
+		if (typeof f === 'function')
+			n = range(f(n), 0, 255);
+		let h = Math.round(n).toString(16);
+		if (h.length == 1) return '0'+h;
+		return h;
+	}).join('')
+}
+
+</script>

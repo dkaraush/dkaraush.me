@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>The Talos Principle - Terminals</title>
+	<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro&amp;subset=latin-ext" rel="stylesheet">
+	<style type="text/css">
+		html, head, body {
+			background: black;
+			color: white;
+			font-family: "Source Code Pro", 'Consolas', monospace;
+		}
+		table * {
+			word-break: break-all;
+		}
+		span.blue {
+			color: lightblue;
+		}
+		.yellow {
+			color: lightyellow;
+		}
+		span.carret {
+			color: white;
+			background: white;
+			animation: blink 1s infinite;
+		}
+		@keyframes blink {
+			0% {opacity: 1;}
+			49% {opacity: 1;}
+			50% {opacity: 0;}
+			99% {opacity: 0;}
+			100% {opacity: 1;}
+		}
+		div#loading {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: black;
+			z-index: 100;
+			text-align: center;
+		}
+		div#loading pre {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translateY(-50%) translateX(-50%);
+		}
+		div#docOutter {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translateY(-50%) translateX(-50%);
+			z-index: 5;
+		}
+		div#document {
+			width: 60vmin;
+			height: 80vmin;
+			border: 2px solid #80807F;
+			background: #0F1418;
+			padding: 0.5em;
+			margin: 0;
+		}
+		div#document pre {
+			margin: 0;
+			white-space: pre-wrap;
+			height: 100%;
+		    overflow-y: auto;
+		    box-sizing: border-box;
+		    position: absolute;
+		    bottom: 0;
+		    left: 0;
+		    padding: 0.5em 1.6em 0.5em 0.5em;
+		    right: -1.1em;
+		}
+		div#document pre::-webkit-scrollbar {
+		    width: 4px;
+		}
+		div#document pre::-webkit-scrollbar-track {
+		    background: transparent; 
+		}
+		div#document pre::-webkit-scrollbar-thumb {
+		    background: #80807F; 
+		}
+		div#document pre::-webkit-scrollbar-thumb:hover {
+		    background: #70706E; 
+		}
+		div#document div {
+			font-size: 70%;
+			position: absolute;
+			bottom: -1.5em;
+			left: 0.5em;
+		}
+
+		div#black {
+			z-index: 4;
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0,0,0,0.4);
+		}
+	</style>
+</head>
+<body>
+
+	<div id="black" style="opacity: 0; display: none;"></div>
+
+	<div id="docOutter" style="display: none;">
+		<div id="document" style="transform: scale(0)">
+			<pre></pre>
+			<div>Нажмите <span class="blue">Escape</span>, чтобы закрыть документ</div>
+		</div>
+	</div>
+
+	<div id="loading">
+		<pre></pre>
+	</div>
+
+	<table>
+		<tbody>
+			<tr><td>
+				
+			</td></tr>
+		</tbody>
+	</table>
+
+<script type="text/javascript" src="eye.js"></script>
+<script type="text/javascript" src="data.js"></script>
+<script type="text/javascript">
+
+
+
+	var LOADED = false, LOADINGSCREEN = true, DOCUMENT = false;
+	frames = eye.split("@");
+	loading = document.querySelector("div#loading pre");
+	var larr = [0, 1, 10, 1, 2, 3, 10, 3, 4, 5, 10, 5, 6, 7, 10, 7, 8, 9, 10, 9, 8, 7, 10, 7, 6, 5, 10, 5, 4, 3, 10, 3, 2, 1, 10, 1];
+	function updateLoading(i) {
+		if (!LOADINGSCREEN) return;
+		if (i == larr.length)
+			i = 0;
+		loading.innerHTML = frames[larr[i]] + "<br><br><br>" + (LOADED ? "Нажмите <span class='blue'>Enter</span>, чтобы войти в терминал." : "Загрузка...");
+
+		if (Math.random() > 0.6 && typeof beep === "function")
+			beep(~~(Math.random()*14+1));
+
+		setTimeout(function () {
+			updateLoading(i+1)
+		}, 300);
+	}
+	updateLoading(0);
+</script>
+<script type="text/javascript">
+	var terminals = Object.keys(data);
+
+	function cmd() {
+		read("[admin@local]# ", function (c) {
+			if (c == "terminals") {
+				sounds["TerminalTypingComputer"].play();
+				type("Доступные терминалы: ", function () {
+					function t(i) {
+						if (i == terminals.length) {
+							type("Для просмотра файлов конкретного терминала введите ", () => {
+								write("<span class='blue'>terminal &lt;id&gt;</span>.");
+								cmd();
+								sounds["TerminalTypingComputer"].pause();
+							}, false);
+							return;
+						}
+						type(" [" + i + "] " + terminals[i] + " ("+data[terminals[i]].length+" файл"+f(data[terminals[i]].length)+")", function () {t(i+1)}, false);
+					}
+					t(0);
+				}, false);
+			} else if (c.substring(0, "terminal".length) == "terminal") {
+				var splitted = c.split(" ");
+				if (splitted.length == 1) {
+					type("Введите номер конкретного терминала.", ()=>{writeln("Для просмотра каждого терминала введите <span class='blue'>terminals</span>."); cmd()});
+					return;
+				}
+				var n = splitted[1];
+				if (isNaN(parseInt(n))) {
+					type("Неверный номер терминала.", cmd);
+					return;
+				}
+				n = parseInt(n);
+				if (n < 0 || n > terminals.length) {
+					type("Неверный номер терминала.", cmd);
+					return;
+				}
+
+				var terminal = data[terminals[n]];
+				if (splitted.length == 2) {
+					type("Терминал " + terminals[n] + ":", () => {
+						var folderMaxLength = Math.max.apply(null, Array.from(terminal, x=>x.folder.length));
+						var dateMaxLength =   Math.max.apply(null, Array.from(terminal, x=>x.date.length));
+						for (var i = 0; i < terminal.length; ++i) {
+							(function (i) {
+								var id = "doc"+~~(Math.random()*1000000);
+								var name = terminal[i].name;
+								writeln(terminal[i].folder + addSpaces(folderMaxLength - terminal[i].folder.length) + " " + terminal[i].date + addSpaces(dateMaxLength - terminal[i].date.length) + " <a href=\"javascript:console.log('wow')\" id=\""+id+"\" class=\"yellow\">" + terminal[i].name + "</a>");
+								document.querySelector("#"+id).onclick = function (e) {
+									typedText = "terminal "+n+" "+name;
+									readEvent("keypress", {key:"Enter"});
+									this.blur();
+									e.preventDefault();
+								}
+							})(i);
+						}
+						writeln("<br>");
+						type("Для просмотра файла введите ", () => {write("<span class='blue'>terminal "+n+" &lt;document's name&gt;</span>"); cmd()});
+					});
+				} else {
+					var docName = splitted[2];
+					var docId = -1;
+					for (var i = 0; i < terminal.length; ++i) {
+						if (terminal[i].name == docName) {
+							docId = i;
+							break;
+						}
+					}
+
+					if (docId == -1) {
+						type("Документ отсутствует.", cmd);
+						return;
+					}
+					if (terminal[docId].text == null) {
+						type("Файл поврежден.", cmd);
+						return;
+					}
+					openDocument(terminal[docId].text);
+					//cmd();
+				}
+			} else if (c == "capsules") {
+				type("Доступные капсулы времени: ", function () {
+					function r(i) {
+						if (i == 22) {
+							type("Для запуска капсулы времени введите:", function () {
+								write("&nbsp;<span class='blue'>capsule &lt;id&gt;</span>.");
+								cmd();
+							});
+							return;
+						}
+						type("Капсула времени #" + (i+1), function () {r(i+1)});
+					}
+					r(0);
+				});
+			} else if (c.split(" ")[0] == "capsule") {
+				var splitted = c.split(" ");
+				if (splitted.length == 1) {
+					type("Введите номер капсулы времени.", cmd);
+					return;
+				}
+				var n = parseInt(splitted[1]);
+				if (isNaN(n) || n < 1 || n > 22) {
+					type("Неверный номер капсулы времени", cmd);
+					return;
+				}
+				var capsuleLoaded = false;
+				var capsuleAudio = document.createElement("audio");
+				capsuleAudio.src = "time-capsules/"+n+".ogg";
+				capsuleAudio.onloadeddata = function () {
+					capsuleLoaded = true;
+				}
+				load("Загрузка аудиофайла", 5, function checkReady() {
+					if (capsuleLoaded) {
+						writeln("");
+							
+						var interval = setInterval(function () {
+							var td = document.querySelector("tr:last-child td");
+							var min = ~~(capsuleAudio.currentTime/60);
+							var sec = ~~(capsuleAudio.currentTime - min*60);
+							var minDur = ~~(capsuleAudio.duration/60);
+							var secDur = ~~(capsuleAudio.duration - minDur*60);
+							var percentage = (capsuleAudio.currentTime / capsuleAudio.duration);
+							td.innerHTML = "["+sp(min)+":"+sp(sec)+"] " + ("=".repeat(Math.floor(percentage*20))) + ("-".repeat(Math.ceil((1-percentage)*20))) + " ["+sp(minDur)+":"+sp(secDur)+"]";
+
+							window.scrollTo(0,document.body.scrollHeight);
+							if (capsuleAudio.paused) {
+								clearInterval(interval);
+								cmd();
+							}
+						}, 250);
+						capsuleAudio.play();
+
+					} else {
+						setTimeout(checkReady, 100);
+					}
+				});
+			} else {
+				type("Неизвестная команда.", cmd);
+			}
+		});
+	}
+	function main () {
+		algorithm([
+			n => {
+				sound("TerminalPowerOn");			
+				load("Загрузка сеанса в библиотеке", 3, () => {write(" Выполнено."); n()});
+			},
+			n => {
+				load("Установка локальных дисков", 3, () => {write(" [47 миллионов] распределенных ресурсов найдено"); n()})
+			},
+			n => load("Подключение сетевых дисков", 6, () => {sound("TerminalSystemBoot"); n();}),
+			n => {writeln("<br>"); type("Сеанс в архиве библиотеки готов.", n); },
+			n => {writeln("Доступны все терминалы. Для просмотра терминалов введите <span class='blue'>terminals</span>.")
+				writeln("Доступны все капсулы времени. Для прослушивания капсул времени введите <span class='blue'>capsules</span>."); cmd();}
+		]);
+	}
+
+	function openDocument(text) {
+		sound("TerminalDocumentOpen");
+		DOCUMENT = true;
+		text = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+		var docOutter = document.querySelector("#docOutter");
+		var doc = document.querySelector("#document");
+		var black = document.querySelector("#black");
+
+		black.style.opacity = 0;
+		black.style.display = "block";
+		docOutter.style.display = "block";
+		doc.style.transform = "scale(0)";
+		doc.querySelector("pre").innerHTML = text;
+
+		function frame(start, duration) {
+			if (Date.now()-start > duration) {
+				doc.style.transform = "scale(1)";
+				black.style.opacity = 1;
+				return;
+			}
+
+			doc.style.transform = "scale("+((Date.now()-start)/(duration))+")";
+			black.style.opacity = ((Date.now()-start)/(duration));
+			requestAnimationFrame(function() {frame(start, duration)});
+		}
+		frame(Date.now(), 500);
+	}
+	function closeDocument() {
+		sound("TerminalDocumentClose");
+		DOCUMENT = false;
+
+		var docOutter = document.querySelector("#docOutter");
+		var doc = document.querySelector("#document");
+		var black = document.querySelector("#black");
+
+		function frame(start, duration) {
+
+			if (Date.now()-start > duration) {
+				doc.style.transform = "scale(0)";
+				black.style.opacity = 0
+				black.style.display = "none";
+				docOutter.style.display = "none";
+				cmd();
+				return;
+			}
+
+			doc.style.transform = "scale("+(1 - (Date.now()-start)/duration)+")";
+			black.style.opacity = 1-(Date.now()-start)/duration;
+			requestAnimationFrame(function() {frame(start, duration)});
+		}
+		frame(Date.now(), 500);
+	}
+
+	function f(n) {
+		if (n==0) return "а";
+		if (n==1) return "";
+		if (n==2) return "а";
+		if (n==3) return "а";
+		if (n==4) return "а";
+		return "ов";
+	}
+	function addSpaces(n) {
+		var r = "";
+		for (var i = 0; i < n; ++i)
+			r += "&nbsp;";
+		return r;
+	}
+	function sp(n) {
+		if (typeof n !== "string") n = n.toString();
+		if (n.length == 1) return "0"+n;
+		if (n.length == 0) return "00";
+		return n;
+	}
+
+</script>
+
+	<script type="text/javascript">
+		var usedSounds = ["TerminalSystemBoot", "TerminalPowerOn", "TerminalTypingComputer", "TerminalDocumentOpen", "TerminalDocumentClose", "Beep1", "Beep2", "Beep3", "Beep4", "Beep5", "Beep6", "Beep7", "Beep8", "Beep9", "Beep10", "Beep11", "Beep12", "Beep13", "Beep14", "Beep15"];
+		var sounds = {};
+		var loadedSounds = 0;
+		for (var i = 0; i < usedSounds.length; ++i) {
+			var tag = usedSounds[i];
+			sounds[tag] = document.createElement("audio");
+			sounds[tag].src = "sounds/"+tag+".wav";
+			sounds[tag].volume = 0.5;	
+			if (tag == "TerminalTypingComputer")
+				sounds[tag].loop = true;
+			if (tag.substring(4) == "Beep")
+				sounds[tag].volume = 0.2;
+			sounds[tag].onloadeddata = function () {
+				loadedSounds++;
+				if (loadedSounds == usedSounds.length) {
+					LOADED = true;
+				}
+			}		
+		}
+
+		function beep(n) {
+			if (sounds["Beep"+n].readyState == 4) {
+				sound("Beep"+n);
+			}
+		}
+
+		function sound(tag) {
+			sounds[tag].play();
+			if (sounds[tag].paused) {
+				//simulate keyboard event to make chrome think, that we play sounds with user interact
+				var keyboardEvent = document.createEvent("KeyboardEvent");
+				var initMethod = typeof keyboardEvent.initKeyboardEvent !== 'undefined' ? "initKeyboardEvent" : "initKeyEvent";
+				keyboardEvent[initMethod]("keydown", true, true, window, false, false, false, false, 40, 0);
+				document.dispatchEvent(keyboardEvent);
+				document.body.click();
+				sounds[tag].play();
+			}
+		}
+
+		var tbody = document.querySelector("tbody");
+		function writeln(msg) {
+			var tr = document.createElement("tr");
+			var td = document.createElement("td");
+			td.innerHTML = msg;
+			tr.appendChild(td);
+			tbody.appendChild(tr);
+
+			window.scrollTo(0,document.body.scrollHeight);
+		}
+		function write(msg) {
+			var td = document.querySelector("tr:last-child td");
+			if (td == null) {
+				writeln(msg);
+			} else {
+				td.innerHTML += msg;
+			}
+
+			window.scrollTo(0,document.body.scrollHeight);
+		}
+		var typesound = sounds["TerminalTypingComputer"];
+		function type(msg, cb, s) {
+			if (typeof s === "undefined") s = true;
+			writeln("");
+			if (s)
+				typesound.play();
+			function t(i) {
+				if (i == msg.length) {
+					if (typeof cb === "function")
+						cb();
+					if (s)
+						typesound.pause();
+					return;
+				}
+
+				write(msg[i]);
+				setTimeout(function(){t(i+1)}, 5);
+			}
+			t(0);
+		}
+
+		window.addEventListener("keypress", function (e) {
+			if (e.key == "Enter" && LOADED && LOADINGSCREEN) {
+				LOADINGSCREEN = false;
+				document.querySelector("div#loading").remove();
+				main();
+			} else if (readEvent != null)
+				readEvent("keypress", e);
+		});
+		window.addEventListener("keydown", function (e) {
+			if (readEvent != null)
+				readEvent("keydown", e);
+		});
+		window.addEventListener("keyup", function (e) {
+			if (e.key == "Escape" && DOCUMENT)
+				closeDocument();
+			if (readEvent != null)
+				readEvent("keyup", e);
+		});
+
+		var typedText = "";
+		var readEvent = null;
+		const carret = "<span class='carret'>@</span>";
+		function read(header, callback) {
+			typedText = "";
+			writeln("");
+			var td = document.querySelector("tr:last-child td");
+			td.innerHTML = header + "<span class='blue'>" + "</span>" + carret;
+
+			window.scrollTo(0,document.body.scrollHeight);
+			readEvent = function (type, e) {
+				if (type == "keydown" && e.key == "Backspace" && typedText.length > 0) {
+					typedText = typedText.substring(0, typedText.length - 1);
+				}
+				if (type == "keypress") {
+					if (e.key == "Enter") {
+						readEvent = null;
+						td.innerHTML = header + "<span class='blue'>" + typedText + "</span>";
+						callback(typedText);
+						return;
+					}
+					typedText += e.key;
+				}
+				td.innerHTML = header + "<span class='blue'>" + typedText + "</span>" + carret;
+			}
+		}
+
+		function load(msg, count, callback) {
+			type(msg, function () {
+				function t(i) {
+					if (i == count) {
+						if (typeof callback === "function")
+							callback();
+
+						return;
+					}
+
+					write(".");
+					setTimeout(function(){t(i+1)}, 100);
+				}
+				t(0);
+			});
+		}
+		function algorithm(arr) {
+			function t(i) {
+				if (i == arr.length)
+					return;
+				arr[i](function () {t(i+1)});
+			}
+			t(0);
+		}
+	</script>
+
+</body>
+</html>

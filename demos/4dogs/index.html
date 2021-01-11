@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>The solution of task about four dogs</title>
+	<style>
+		html,head,body{
+			background: lightblue;
+		}
+		canvas {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translateX(-50%) translateY(-50%);
+			background: lightblue;
+		}
+	</style>
+</head>
+<body>
+	<canvas width="600" height="600"></canvas>
+
+	<script>
+		
+	ctx = document.querySelector("canvas").getContext("2d");
+	const S = 500;
+
+	I = 0;
+
+	last = Date.now();
+	points = [
+		[0, 0],
+		[0, S],
+		[S, S],
+		[S, 0]
+	];
+	a = true;
+	var d = 0;
+
+	trajectory = [[[0,0]],[[0,S]],[[S,S]],[[S,0]]];
+	start = Date.now();
+	function render() {
+		if ((~~(d/S*1000)/10) <= 100)
+			requestAnimationFrame(render);
+	
+		var deltaTime = (Date.now() - last) / 1000;	
+		var points0 = points[0];
+		var wasPoints = [points[0], points[1], points[2], points[3]];
+		for (var i = 0; i < points.length; ++i) {
+			var j = i+1;
+			if (j == points.length) j = 0;
+
+			var was = [points[i][0]+0, points[i][1]+0];
+			points[i][0] = points[i][0] + (wasPoints[j][0] - points[i][0]) / distance(wasPoints[j], points[i]) * (S/10) * (deltaTime);
+			points[i][1] = points[i][1] + (wasPoints[j][1] - points[i][1]) / distance(wasPoints[j], points[i]) * (S/10) * (deltaTime);
+			if (i == 0)
+				d += distance(was, points[i]);
+			trajectory[i].push([points[i][0], points[i][1]]);
+		}
+		last = Date.now();
+
+		clear();
+		ctx.strokeStyle = "darkred";
+		ctx.strokeRect(50, 50, 500, 500);
+
+
+		ctx.fillStyle = "darkred";
+		ctx.font = "20px Arial";
+		ctx.fillText("Distance of each line: " + ((~~(d/S*1000)/10)>100?100:(~~(d/S*1000)/10)) + " m", 50, 40)
+		ctx.fillText("Time: " + ~~((Date.now()-start)/1000) + " s", 50, 575)
+		for (var i = 0; i < trajectory.length; ++i) {
+			ctx.beginPath();
+			for (var j = 0; j < trajectory[i].length; ++j)  {
+				ctx[j==0?"moveTo":"lineTo"](trajectory[i][j][0]+50, trajectory[i][j][1]+50);
+			}
+			ctx.lineWidth = 3;
+			ctx.strokeStyle = "red";
+			ctx.stroke();
+		}
+
+		ctx.beginPath();
+		for (var i = 0; i < points.length; ++i)
+			ctx[i==0?"moveTo":"lineTo"](points[i][0]+50, points[i][1]+50);
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = "darkred";
+		ctx.closePath();
+		ctx.stroke();
+
+
+		for (var i = 0; i < points.length; ++i) {
+			ctx.fillStyle = "darkred";
+			ctx.font = "15px Arial";
+			ctx.fillText(i+"", points[i][0]+30, points[i][1]+60);
+			point(points[i][0], points[i][1]);
+		}
+
+
+	}
+	render();
+
+
+	function clear() {
+		ctx.fillStyle = "lightblue";
+		ctx.fillRect(0, 0, 600, 600);
+	}
+
+	function point(x, y) {
+		ctx.fillStyle = "red";
+		ctx.fillRect(50 + x-2, 50 + y-2, 4, 4);
+	}
+
+	function distance(a, b) {
+		return Math.sqrt(Math.pow((a[0]-b[0]),2)+Math.pow(a[1]-b[1], 2));
+	}
+
+
+	</script>
+
+</body>
+</html>

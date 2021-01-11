@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Circle</title>
+	<style type="text/css">
+		html, head, body {
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+
+	<canvas></canvas>
+
+</body>
+<script type="text/javascript">
+	var canvas = document.querySelector("canvas");
+	var ctx = canvas.getContext("2d");
+	var W, H;
+
+	function onResize() {
+		canvas.width = W = window.innerWidth;
+		canvas.height = H = window.innerHeight;
+	}
+	window.addEventListener("resize", onResize);
+	onResize();
+
+	const F = 100;
+	var s = 3, R = 0, color = [0,0,0], gradient = [[F,0,0],[F,F,0],[0,F,0],[0,F,F],[0,0,F],[F,0,F],[F,0,0]], colorT = 0;
+	function renderCircle(n, g) {
+		//ctx.clearRect(0, 0, W, H);
+
+		var r = Math.min(W, H) / 2 * s * Math.pow(0.0285, g);
+		var t = new Array(n);
+		for (var i = 0; i < n; ++i) {
+			t[i] = {x: W/2 + Math.sin(2*Math.PI / n * (i + 0.5) + R) * r,
+					y: H/2 + Math.cos(2*Math.PI / n * (i + 0.5) + R) * r };
+		}
+
+		ctx.beginPath();
+		for (var i = 0; i < n; ++i) {
+			for (var j = i+1; j < n; ++j) {
+				ctx.moveTo(t[i].x, t[i].y);
+				ctx.lineTo(t[j].x, t[j].y);
+			}
+		}
+		ctx.closePath();
+		ctx.strokeStyle = "rgba("+color.join(",")+",0.5)";
+		ctx.lineWidth = 1;
+		ctx.stroke();
+	}
+
+	var i = 0;
+	function loop() {
+		requestAnimationFrame(loop);
+		ctx.clearRect(0, 0, W, H);
+		renderCircle(55, i);
+		renderCircle(55, i+1);
+		renderCircle(55, i+2);
+		renderCircle(55, i+3);
+		s *= 1.015;
+		R += 0.005;
+		colorT += 0.01;
+		if (~~colorT >= gradient.length)
+			colorT -= gradient.length;
+		color = color_lerp(gradient[~~colorT], gradient[~~colorT+1==gradient.length?0:~~colorT+1], colorT - ~~colorT);
+		if (Math.pow(0.0285, i+1) * Math.min(W, H) * s > Math.sqrt(2*Math.max(W, H)*Math.max(W, H)))
+			i++;
+	}
+	function color_lerp(a, b, t) {
+		return [
+				a[0] + (b[0] - a[0]) * t,
+				a[1] + (b[1] - a[1]) * t,
+				a[2] + (b[2] - a[2]) * t
+			]
+	}
+	loop();
+</script>
+</html>

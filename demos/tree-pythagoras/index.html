@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>tree pifagor</title>
+	<style type="text/css">
+		canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+		}
+		div#hint {
+			position: absolute;
+			left: 15px;
+			bottom: 15px;
+			font-family: Consolas, monospace;
+			font-size: 12px;
+		}
+		div#debug {
+			position: absolute;
+			right: 15px;
+			width: 100px;
+			bottom: 15px;
+			font-family: Consolas, monospace;
+			font-size: 12px;
+			opacity: 0;
+		}
+	</style>
+</head>
+<body>
+<canvas></canvas>
+<div id='hint'>
+	<b>D</b> - debug<br>
+	<b>P</b> - pause/play<br><br>
+	<b>Q</b> - +brench<br>
+	<b>A</b> - -brench<br>
+</div>
+<div id="debug">
+	<b>∠A</b> = <span id="A"></span>°<br>
+	<b>∠B</b> = <span id="B"></span>°<br>
+	<b>Brenches</b>: <span id="brenches"></span>
+</div>
+<script type="text/javascript">
+var sin = Math.sin, cos = Math.cos, sqrt = Math.sqrt, pi = Math.PI, atan2 = Math.atan2, round = Math.round;
+var canvas = document.querySelector('canvas');
+var ctx = canvas.getContext('2d');
+var W, H;
+
+function onResize() {
+	canvas.width = W = window.innerWidth;
+	canvas.height = H = window.innerHeight;
+}
+window.addEventListener('resize', onResize);
+onResize();
+var D = 1, N = 10, debug = false, playing = true;
+
+window.addEventListener('keyup', function (e) {
+	if (e.code == "KeyD") {
+		debug = !debug;
+		document.querySelector("#debug").style.opacity = debug ? "1" : "0";
+	}
+	if (e.code == "KeyP")
+		playing = !playing;
+	if (e.code == "KeyQ") {
+		N++;
+		if (N > 15)
+			N = 15;
+	} else if (e.code == "KeyA") {
+		N--;
+		if (N <= 0)
+			N = 1;
+	}
+})
+
+function render() {
+	requestAnimationFrame(render);
+	ctx.clearRect(0,0,W,H);
+	if (playing)
+		D = sin(Date.now()/500)*(pi/12)+pi/4;
+	if (debug) {
+		document.querySelector("#A").innerText = round(D/pi*180*100)/100;
+		document.querySelector("#B").innerText = round((pi/2-D)/pi*180*100)/100;
+		document.querySelector("#brenches").innerText = N;
+	}
+	tree(0, N, W/2, H/8*7, 0, 50, 100);
+}
+function tree(i, n, x, y, a, w, h) {
+	
+	var ax = x+cos(a-pi/2)*h+cos(a+pi)*w/2, ay = y+sin(a-pi/2)*h+sin(a+pi)*w/2;
+	var bx = x+cos(a-pi/2)*h+cos(a)*w/2, by = y+sin(a-pi/2)*h+sin(a)*w/2
+	var from = "4E342E", to = "2E7D32";
+	var F = [parseInt(from.substring(0,2),16), parseInt(from.substring(2,4),16), parseInt(from.substring(4,6),16)];
+	var T = [parseInt(to.substring(0,2),16), parseInt(to.substring(2,4),16), parseInt(to.substring(4,6),16)];
+	ctx.fillStyle="rgb("+(F[0]+(T[0]-F[0])*(i/(n-1)))+','+(F[1]+(T[1]-F[1])*(i/(n-1)))+','+(F[2]+(T[2]-F[2])*(i/(n-1)))+')';
+	ctx.beginPath();
+	ctx.moveTo(x+cos(a)*w/2,y+sin(a)*w/2);
+	ctx.lineTo(x+cos(a+pi)*w/2,y+sin(a+pi)*w/2);
+	ctx.lineTo(ax,ay);
+	ctx.lineTo(bx,by);
+	ctx.fill();
+	// ctx.beginPath();
+	// ctx.arc((ax+bx)/2, (ay+by)/2, w/2, 0, pi*2);
+	// ctx.fill();
+
+	var A = D;
+	var B = pi/2 - A;
+	var alen = sin(B)*w;
+	var blen = sin(A)*w;
+	var cx = ax + cos(a-A)*alen, cy = ay + sin(a-A)*alen;
+	if (i < n) {
+		tree(i+1,n,(ax+cx)/2,(ay+cy)/2,a-A,alen,h*(alen/w));
+		tree(i+1,n,(bx+cx)/2,(by+cy)/2,a+B,blen,h*(blen/w));
+		if (debug) {
+			ctx.lineWidth = 1;
+			ctx.beginPath();
+			ctx.arc((ax+bx)/2, (ay+by)/2, w/2, 0, pi*2);
+			ctx.strokeStyle = 'red';
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.moveTo(ax,ay);
+			ctx.lineTo(cx,cy);
+			ctx.lineTo(bx,by);
+			ctx.closePath();
+			ctx.lineWidth = 2;
+			ctx.strokeStyle = 'green';
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.fillStyle = 'red';
+			ctx.arc(ax,ay,3,0,pi*2);
+			ctx.fill();
+			ctx.beginPath();
+			ctx.arc(bx,by,3,0,pi*2);
+			ctx.fill();
+			ctx.beginPath();
+			ctx.arc(cx,cy,3,0,pi*2);
+			ctx.fill();
+			ctx.lineWidth = 1;
+			ctx.beginPath();
+			ctx.arc(ax,ay,w/4,a,-A+a,true);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.arc(bx,by,w/4*0.8,a+pi,B+a+pi,false);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.arc(bx,by,w/4,a+pi,B+a+pi,false);
+			ctx.stroke();
+
+		}	
+	}
+}
+render();
+</script>
+</body>
+</html>

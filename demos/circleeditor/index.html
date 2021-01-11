@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Circle editor</title>
+	<style type="text/css">
+		#workspace {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 35%;
+			bottom: 0;
+			overflow: hidden;
+		}
+		#editor {
+			position: absolute;
+			top: 0;
+			left: 65%;
+			right: 0;
+			bottom: 0;
+			padding: 10px;
+		}
+		#editor textarea {
+			width: 100%;
+			height: 100%;
+			border: 0;
+			padding: 0;
+			outline: none;
+		}
+	</style>
+</head>
+<body>
+	<div id="workspace">
+		<canvas></canvas>
+	</div>
+	<div id="editor">
+<textarea>
+/**
+ *  function arguments:
+ *  	a - current angle
+ *      t - deltatime / second
+ */
+return {
+	startCircleX: 0,
+	startCircleY: 0,
+	circleX: function (a, t) {
+		return a+Math.PI*t*0.5;
+	},
+	circleY: function (a, t) {
+		return a+Math.PI*t*0.25;
+	}
+}
+</textarea>
+</div>
+<script type="text/javascript">
+
+	Array.from(Object.getOwnPropertyNames(Math), function (a) {window[a] = Math[a]});
+
+	var canvas = document.querySelector('canvas');
+	var ctx = canvas.getContext('2d');
+
+	var W, H;
+
+	var circleD = 200;
+	var circleOffset = 10;
+	function onResize() {
+		canvas.width = W = window.innerWidth*0.65;
+		canvas.height = H = window.innerHeight;
+		circleD = Math.min(W, H)/2*0.9;
+		circleOffset = (Math.min(W, H)-circleD*2)/4;
+	}
+	onResize();
+	window.addEventListener('resize', onResize);
+
+	const colors = {
+		background: color("#263238"),
+		circlesGradient: [color("#F44336"), color("#9C27B0"), color("#2196F3"), color("#009688"), color("#4CAF50"), color("#FFEB3B"), color("#FF9800")]
+	};
+	function colorLerp(a, b, t) {
+		return color([
+				a.raw[0]+(b.raw[0]-a.raw[0])*t,
+				a.raw[1]+(b.raw[1]-a.raw[1])*t,
+				a.raw[2]+(b.raw[2]-a.raw[2])*t,
+				a.raw[3]+(b.raw[3]-a.raw[3])*t
+			]);
+	}
+	function circleColor(i, n) {
+		i = i / n * (colors.circlesGradient.length-1);
+		var a = ~~i;
+		var b = ~~(i+1);
+		return colorLerp(colors.circlesGradient[a], colors.circlesGradient[b], i - a)
+	}
+
+	var codeArea = document.querySelector('textarea');
+	var code = codeArea.value;
+
+	var circleX = 0;
+	var circleY = 0;
+	var circleData = [];
+
+	var lastTime = Date.now();
+	function render() {
+		var t = (Date.now()-lastTime)/1000;
+		lastTime = Date.now();
+		var codeobj;
+		if (codeArea.value != code) {
+			code = codeArea.value;
+			circleData = [];
+			try {
+				codeobj = new Function(code)();
+			} catch (e) {
+				requestAnimationFrame(render);
+				return;
+			}
+			circleX = codeobj.startCircleX;
+			circleY = codeobj.startCircleY;
+		} else {
+			try {
+				codeobj = new Function(code)();
+			} catch (e) {
+				requestAnimationFrame(render);
+				return;
+			}
+		}
+		circleX = codeobj.circleX(circleX, t);
+		circleY = codeobj.circleY(circleY, t);
+
+		ctx.fillStyle = colors.background.style;
+		ctx.fillRect(0,0,W,H);
+
+		var w = (circleD+circleOffset*2)*2;
+		var h = (circleD+circleOffset*2)*2;
+
+		var ox = (W - w) / 2;
+		var oy = (H - h) / 2;
+
+		// X
+		ctx.lineWidth = 3;
+		ctx.beginPath();
+		ctx.arc(ox + circleD*1.5+circleOffset*3,
+				oy + circleOffset + circleD*0.5, circleD/2, 0, Math.PI*2);
+		ctx.strokeStyle = colors.circlesGradient[0].style;
+		ctx.stroke();
+
+		ctx.beginPath();
+		ctx.arc(ox + circleD*1.5+circleOffset*3 + Math.cos(circleX)*(circleD/2),
+				oy + circleOffset + circleD*0.5 + Math.sin(circleX)*(circleD/2), 4, 0, Math.PI*2);
+		ctx.fillStyle = 'white';
+		ctx.fill();
+
+		// Y
+		ctx.lineWidth = 3;
+		ctx.beginPath();
+		ctx.arc(ox + circleOffset + circleD*0.5,
+				oy + circleD*1.5+circleOffset*3, circleD/2, 0, Math.PI*2);
+		ctx.strokeStyle = colors.circlesGradient[1].style;
+		ctx.stroke();
+
+		ctx.beginPath();
+		ctx.arc(ox + circleOffset + circleD*0.5 + Math.cos(circleY)*(circleD/2),
+				oy + circleD*1.5+circleOffset*3 + Math.sin(circleY)*(circleD/2), 4, 0, Math.PI*2);
+		ctx.fillStyle = 'white';
+		ctx.fill();
+
+		// circle
+		ctx.beginPath();
+		ctx.strokeStyle = colorLerp(colors.circlesGradient[0], colors.circlesGradient[1], 0.5).style;
+		for (var i = 0; i < circleData.length; ++i) {
+			ctx[i==0?'moveTo':'lineTo'](ox + circleD*1.5+circleOffset*3 + circleData[i][0], oy + circleD*1.5+circleOffset*3 + circleData[i][1]);
+		}
+		ctx.stroke();
+		if (circleData.length > 0) {
+			ctx.beginPath();
+			ctx.arc(ox + circleD*1.5+circleOffset*3 + circleData[circleData.length-1][0],
+					oy + circleD*1.5+circleOffset*3 + circleData[circleData.length-1][1], 4, 0, Math.PI*2);
+			ctx.fillStyle = 'white';
+			ctx.fill();
+		}
+
+		ctx.lineWidth = 2;
+		ctx.setLineDash([5,5]);
+		ctx.beginPath();
+		var x = ox+circleD*1.5+circleOffset*3 + Math.cos(circleX)*(circleD/2);
+		var y = oy+circleOffset + circleD*0.5 + Math.sin(circleX)*(circleD/2);
+		ctx.moveTo(x, y);
+		ctx.lineTo(x, H);
+		ctx.strokeStyle='rgba(255,255,255,0.1)';
+		ctx.stroke();
+
+		ctx.beginPath();
+		var x = ox+circleOffset + circleD*0.5 + Math.cos(circleY)*(circleD/2);
+		var y = oy+circleD*1.5+circleOffset*3 + Math.sin(circleY)*(circleD/2);
+		ctx.moveTo(x, y);
+		ctx.lineTo(W, y);
+		ctx.strokeStyle='rgba(255,255,255,0.25)';
+		ctx.stroke();
+		ctx.setLineDash([]);
+
+		circleData.push([
+				Math.cos(circleX)*(circleD/2),
+				Math.sin(circleY)*(circleD/2)
+			]);
+
+
+		requestAnimationFrame(render);
+	}
+	render();
+
+	function color(hex) {
+		if (typeof hex === 'string') {
+			if (hex[0] == '#')
+				hex = hex.substring(1);
+			var R = parseInt(hex.substring(0, 2), 16);
+			var G = parseInt(hex.substring(2, 4), 16);
+			var B = parseInt(hex.substring(4, 6), 16);
+			var A = 255;
+			if (hex.length >= 8)
+				A = parseInt(hex.substring(6, 8), 16);
+			return {
+				style: 'rgba('+R+','+G+','+B+','+(A/255)+')',
+				raw: [R,G,B,A]
+			}
+		} else if (Array.isArray(hex) && hex.length == 4) {
+			return {
+				style: 'rgba('+Array.from(hex,function(a){return ~~a}).join()+')',
+				raw: hex
+			}
+		}
+	}
+</script>
+</body>
+</html>

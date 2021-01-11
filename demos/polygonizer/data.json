@@ -1,0 +1,6 @@
+{
+	"year": 2017,
+	"title": "Photo polygonizer",
+	"text": "Makes photo more \"polygonal\". Works on client-side, no server-side rendering!",
+	"contains_page": false
+}

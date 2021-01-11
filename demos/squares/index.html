@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<!-- saved from url=(0038)http://dkaraush.shpp.me/demos/squares/ -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Squares</title>
+<style type="text/css">
+	canvas {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+
+	}
+</style>
+</head>
+<body>
+<canvas width="1366" height="657"></canvas>
+<script type="text/javascript">
+var sin = Math.sin, cos = Math.cos, sqrt = Math.sqrt, pi = Math.PI, tan = Math.tan;
+var canvas = document.querySelector("canvas");
+var ctx = canvas.getContext('2d');
+
+var W, H, min, max, R;
+function onResize() {
+	canvas.width = W = window.innerWidth;
+	canvas.height = H = window.innerHeight;
+	min = W < H ? W : H;
+	max = W > H ? W : H;
+	R = sqrt(max*max*2)/2;
+}
+onResize();
+window.addEventListener("resize", onResize);
+
+var colors = [];
+var i = 1, sr = 1, sa = 0, sj = 0;
+function render() {
+	requestAnimationFrame(render)
+	i *= 1.01;
+	var r = R*sr*i;
+	var a = sa;
+	var j = sj;
+	var firstDA = -1;
+	var da = sin(Date.now()/5000*pi*2)*pi*0.05+pi*0.08;
+	var x = 0, pr = r;
+	while (pr > 0.5) {
+		pr*=D(da);
+		x++;
+	}
+	while (r > 0.5) {
+		if (typeof colors[j] === 'undefined')
+			colors[j] = newColor();
+		var u = (j-sj)/x*255;
+		rect(W/2, H/2, r, a, 'rgb('+u+','+(255-u)+','+(255-u)+')');
+		if (firstDA == -1)
+			firstDA = da;
+		r *= D(da);
+		a += da;
+		j++;
+	}
+
+	if (R*sr*i*D(firstDA) > R*1.5) {
+		console.log('remove')
+		sr *= D(firstDA);
+		sa += firstDA;
+		sj++;
+	}
+
+}
+function rect(x,y,r,a,color) {
+	ctx.beginPath();
+	ctx.moveTo(x+cos(a+pi*0.25)*r, y+sin(a+pi*0.25)*r);
+	ctx.lineTo(x+cos(a-pi*0.25)*r, y+sin(a-pi*0.25)*r);
+	ctx.lineTo(x+cos(a-pi*0.75)*r, y+sin(a-pi*0.75)*r);
+	ctx.lineTo(x+cos(a-pi*1.25)*r, y+sin(a-pi*1.25)*r);
+	ctx.closePath();
+	ctx.fillStyle = color;
+	ctx.stroke();
+	ctx.fill();
+}
+function D(a) {
+	a = a % (pi/4);
+	var A = 1;
+	var B = A * tan(a);
+	var C = sqrt(A*A+B*B);
+	return C/(A+B);
+}
+function newColor() {
+	function h() {
+		var str = (~~(Math.random()*255)).toString(16);
+		return str.length == 1 ? "0"+str : str;
+	}
+	return "#"+[h(),h(),h()].join("");
+}
+render();
+</script>
+
+</body></html>

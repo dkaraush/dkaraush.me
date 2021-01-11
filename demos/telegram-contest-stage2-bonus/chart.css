@@ -1,0 +1,415 @@
+.chart {
+	overflow: hidden;
+	box-sizing: border-box;
+	width: 100%;
+	padding: 15px 0 0 0;
+	position: relative;
+	transition-duration: 0.15s;
+	transition-timing-function: ease-in-out;
+	transition-property: padding-bottom;
+	-webkit-tap-highlight-color: transparent;
+	user-select: none;
+	-ms-user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+.chart h3 {
+	margin: 0;
+}
+.chart > .chart--header {
+	position: relative;
+	width: 100%;
+	height: 40px;
+	line-height: 100%;
+	vertical-align: middle;
+	display: inline-block;
+	padding: 0 15px;
+	box-sizing: border-box;
+}
+.chart > .chart--header * {
+	color: #000000;
+	position: absolute;
+	transition-delay: 0s;
+	transition-duration: 0.15s;
+	transition-property: color, top, opacity, font-size, padding, line-height, background-size;
+	width: 60%;
+	vertical-align: middle;
+	display: inline-block;
+	transform: translateY(-50%);
+}
+html.dark .chart .chart--header * {
+	color: #F8F8F8;
+}
+.chart > .chart--header .chart--date,
+.chart > .chart--header .chart--date-zoomed {
+	right: 15px;
+}
+.chart--zoom-out {
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAACXklEQVR42mNgGAWjgI5Aq/4Kj/Xsl66WM1+kW815WWY9+3m48eTHunR3iPm0l3rWs17tspnz+o/t3Df/0TFQ/KX17Fe1QAez0TpE2Kxmv+wBWvgXm0PQMdBRN0ynPjeljWtyt7Fbz3p5Gi0k/gAtvQTEi0EOtZr9ao/NnFdv0dVYzHoeRnX3WM16sQjV9y/3m096IoNFKSPQ4RlA+c9wR81+/c1q+gsdqjnGesZrExTHzHrZDbIYnx6DiY9VrWa9fITQ82on1RxkOevFNqR0sYFofdNfGSInfJDHKHaMbvslQZihQPq3cf8DSZJCd9aryTAHWc16NYHy6Jr9MggpdI6Qqt9i1gsXpGi7TIXE/CoXyUHT4BZNf+5gM/tlAy4MU6fXfUcMkeNevaVCCL2qQDjodRdMHGQpvjIIpk6m8BgnkoN+UZ6gZ75IghkITNwrSdVvPPmpBiINvXhMsYMspjw2R64SSA5hYJmEpH89dcqh2S+fwX0580UE0RpDVzGDEjJC78tYKjnoVRVSOnhnNvmFIpEZYgJKggZWP1RrZgCD+wVS0L+wnPXcHpd6UEIG5UjkRA7KrdSty2a8skOu5YHsf0BLZ4PKKeNJj5TBbaOZr2yAFWweMGoeoDhm9qtbNKnwQZYDE+lHYpoeyKGJlP52UL2NpN/3WBoYMmsJOcRy5ssvlrNe9jGknWFFCS1aOApSUr+0BpYrnUDHHQWmj+fAkPgKylE2s1/NA6YvH+QEDHIEXRxFUuMO2H4addSoo2jpKFC3aWB7mUiOGvgQQnIUsCPQMjgcMwpGAZ0AAFmfrvjBe9zVAAAAAElFTkSuQmCC);
+	background-repeat: no-repeat;
+	background-position: 2px center;
+	background-size: 15px;
+	left: 15px;
+	color: #108BE3 !important;
+	min-height: 20px;
+	padding-left: 16px;
+	line-height: 15px;
+	vertical-align: middle;
+	top: 10px;
+	font-size: 50%;
+	user-select: none;
+	-ms-user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	width: 35% !important;
+}
+.chart--date, .chart--heading, .chart.chart--zoomed .chart--date-zoomed, .chart.chart--zoomed .chart--zoom-out {
+	top: 50%;
+}
+.chart--date, .chart.chart--zoomed .chart--date-zoomed, .chart.chart--zoomed .chart--heading, .chart--zoom-out {
+	opacity: 0;
+}
+.chart--heading {
+	font-size: 120%;
+	width: 40% !important;
+}
+.chart--date {
+	opacity: 1;
+	font-size: 80%;
+	text-align: right;
+}
+.chart--date-zoomed {
+	opacity: 0;
+	top: 70%;
+	font-size: 50%;
+	text-align: right;
+}
+.chart.chart--zoomed .chart--date {
+	top: -10px;
+	font-size: 50%;
+	opacity: 0;
+}
+.chart.chart--zoomed .chart--date-zoomed {
+	opacity: 1;
+	font-size: 80%;
+}
+.chart.chart--zoomed .chart--heading {
+	top: 20%;
+	font-size: 50%;
+}
+.chart.chart--zoomed .chart--zoom-out {
+	opacity: 1;
+	font-size: 100%;
+	min-height: 30px;
+	padding-left: 32px;
+	line-height: 30px;
+	background-size: 30px;
+	cursor: pointer;
+}
+.chart--content {
+	position: relative;
+	width: 100%;
+	height: 20em;
+	margin-bottom: 15px;
+}
+.chart--content canvas {
+	width: 100%;
+	height: 100%;
+	z-index: 1;
+	position: absolute;
+}
+.chart--content .chart--slider {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 3em;
+	z-index: 2;
+	user-select: none;
+	-ms-user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	opacity: 1;
+	transition-property: transform, opacity;
+	transition-duration: 0.15s;
+	transition-timing-function: linear;
+	transform: scale(1);
+	margin: 0 15px;
+}
+.chart--content .chart--slider.chart--hide {
+	transform: scale(0);
+	opacity: 0;
+}
+.chart--slider > span {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	transition: background ease-in-out 0.15s;
+}
+.chart--slider > span.chart--btn {
+	border-color: #C0D1E1;
+	border-style: solid;
+	border-left-width: 11px;
+	border-right-width: 11px;
+	border-top-width: 1px;
+	border-bottom-width: 1px;
+	border-radius: 8px;
+	margin-left: -10px;
+	z-index: 3;
+	transition: border-color ease-in-out 0.15s;
+	height: 100%;
+	margin-top: -1px;
+}
+html.dark .chart--slider > span.chart--btn {
+	border-color: #56626D;
+}
+.chart--slider > span.chart--bg {
+	background: #E2EEF9;
+	opacity: 0.6;
+	border-radius: 5px;
+}
+html.dark .chart--slider > span.chart--bg {
+	background: #304259;
+	opacity: 0.6;
+}
+.chart--slider .chart--btn > span {
+	position: absolute;
+	width: 0.15em;
+	height: 0.7em;
+	border-radius: 0.15em;
+	background: #FFFFFF;
+	top: 1.15em;
+}
+.chart--slider .chart--btn > span:nth-child(1) {
+    left: -6px;
+}
+.chart--slider .chart--btn > span:nth-child(2) {
+	right: -5px;
+}
+.chart--checkboxes {
+	width: 100%;
+	transition-property: opacity;
+	padding: 0 15px;
+	box-sizing: border-box;
+}
+.chart--checkbox {
+	-webkit-tap-highlight-color: transparent;
+	outline: none;
+	box-sizing: border-box;
+	display: inline-block;
+	padding: 0.35em 1em 0.35em 2.5em;
+	height: 2.25em;
+	border-radius: 5em;
+	border: solid 1px #000000;
+	position: relative;
+	cursor: pointer;
+	margin: 0 0.5em 0.5em 0;
+	overflow: hidden;
+	user-select: none;
+	-ms-user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	transition: background 0.15s ease-in-out;
+}
+.chart--checkbox.chart--not-checked {
+	background-color: transparent !important;
+}
+.chart--checkbox .chart--checker {
+	display: inline-block;
+	position: absolute;
+	width: 1.5em;
+	top: 0;
+	left: 0.5em;
+	bottom: 0;
+	transform: scale(0.5);
+	opacity: 0;
+	transition: all ease-in-out 0.15s;
+}
+.chart--checkbox span.chart--label {
+    margin-left: -0.75em;
+    padding-right: 0.75em;
+    transition: all ease-in-out 0.15s;
+    vertical-align: middle;
+    line-height: 24px;
+    display: inline-block;
+}
+
+.chart--checkbox.chart--checked span.chart--label {
+    margin: 0;
+    padding: 0;
+    color: #FFFFFF !important;
+    z-index: 3;
+}
+.chart--checker span:nth-child(1) {
+    position: absolute;
+    width: 0.125em;
+    height: 0.45em;
+    border-radius: 1em;
+    transform: rotate(-45deg);
+    bottom: 0.66em;
+    left: 0.45em;
+}
+.chart--checker span:nth-child(2) {
+    position: absolute;
+    width: 0.125em;
+    height: 1em;
+    border-radius: 1em;
+    transform: rotate(40deg);
+    left: 0.9em;
+    bottom: 0.6em;
+}
+.chart--checkbox.chart--checked .chart--checker {
+    transform: scale(1);
+    opacity: 1;
+}
+.chart--checkbox.chart--checked .chart--checker span {
+    background: #FFFFFF;
+}
+.chart--checkbox .chart--bg {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    transition: opacity ease-in-out 0.15s;
+    opacity: 0;
+    z-index: -1;
+}
+.chart--checkbox.chart--checked .chart--bg {
+	opacity: 1;
+}
+div.chart--hover {
+    z-index: 2;
+    position: absolute;
+    background: #FAFAFA;
+    border-radius: 0.5em;
+    display: inline-block;
+    padding: 0.4em 0.75em;
+    font-size: 0.8em;
+    box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+    transition: background 0.15s ease-in-out,
+    			color 0.15s ease-in-out,
+    			left 0.5s ease-in-out;
+    white-space: nowrap;
+    top: 1.5em;
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+.chart--hover > .chart--percents,
+.chart--hover > .chart--values {
+    font-weight: bold;
+}
+.chart--hover > .chart--values {
+    float: right;
+}
+.chart--hover > span {
+    display: inline-block;
+    padding-right: 0.5em;
+    text-overflow: ellipsis;
+}
+.chart--hover > span:last-child {
+    padding: 0;
+}
+div.chart--hover,
+div.chart--hover h3,
+div.chart--hover table {
+	color: black;
+    transition: background 0.15s ease-in-out,
+    			color 0.15s ease-in-out;
+}
+html.dark div.chart--hover h3,
+html.dark div.chart--hover table {
+	color: white;
+}
+html.dark div.chart--hover {
+    background: #242F3E;
+}
+.chart--hover h4 {
+    margin: 0;
+}
+.chart--hover > div > span {
+    float: right;
+   	text-align: right;
+    min-width: 2em;
+    text-overflow: ellipsis;
+}
+.chart .chart--btn .chart--whiteborder {
+	position: absolute;
+	top: -1px;
+	right: -11px;
+	left: -11px;
+	bottom: -1px;
+	background: transparent;
+	width: initial;
+	height: initial;
+	border-left: 1px solid white;
+	border-right: 1px solid white;
+	border-radius: 7px;
+	opacity: 1;
+	transition: opacity 0.15s ease-in-out;
+}
+html.dark .chart .chart--btn .chart--whiteborder {
+	opacity: 0;
+}
+.chart .chart--value {
+	float: right;
+	font-weight: bold;
+	padding-left: 10px;
+}
+.chart table {
+	width: 100%;
+	min-width: 140px;
+	font-size: 14px;
+}
+.chart .chart--label,
+.chart .chart--percent {
+	float: left;
+	padding: 0;
+	margin-left: -1px;
+}
+.chart .chart--percent {
+	font-weight: bold;
+	padding-right: 10px;
+	min-width: 40px;
+}
+.chart--hover h3 {
+	padding-bottom: 4px;
+	padding-right: 16px;
+	font-size: 14px;
+}
+.chart--hover span.chart--icon {
+	position: absolute;
+    right: 10px;
+    top: 8px;
+    width: 8px;
+    height: 8px;
+    padding: 0;
+}
+.chart--hover.chart--available > .chart--icon {
+	transform: rotate(45deg);
+	border: 2px solid #ddd;
+	border-radius: 2px;
+	border-bottom-color: transparent;
+	border-left-color: transparent;
+	height: 4px !important;
+	width: 4px !important;
+}
+.chart--hover.chart--loading > .chart--icon {
+    border-radius: 50%;
+    border: 2px solid #aaa;
+    border-right-color: #333;
+    animation: loading 0.5s linear infinite;
+}
+html.dark .chart--hover.chart--loading > .chart--icon {
+    border-radius: 50%;
+    border: 2px solid #333;
+    border-right-color: #aaa;
+    animation: loading 0.5s linear infinite;
+}
+@keyframes loading {
+	0% { transform: rotate(0deg); }
+	50% { transform: rotate(180deg); }
+	100% { transform: rotate(360deg); }
+}

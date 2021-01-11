@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript">
+		// window.onerror = alert;
+	</script>
+	<meta charset="utf-8">
+	<meta name="theme-color" content="#FAFAFA">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Chart Library Example #1</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="main.css">
+	<link rel="stylesheet" type="text/css" href="chart.css">
+</head>
+<body>
+	<main>
+		<br>
+		<h1>Example header</h1>
+		<h4><i>i love tvorog</i></h4>
+		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed luctus ligula sit amet lacus blandit, at lobortis nunc convallis. In justo ex, accumsan eu ligula porta, mattis dapibus lacus. Etiam fermentum, nibh et gravida laoreet, felis eros tristique purus, id egestas lectus eros congue arcu. Vestibulum nisl tellus, condimentum in enim id, porta fringilla neque. Aenean augue ligula, ultricies a nunc sed, feugiat mollis purus. Vivamus a nisl at sapien tristique venenatis. Fusce aliquet nulla velit, eget suscipit quam mattis a. Integer imperdiet, justo nec pretium accumsan, nunc purus auctor metus, malesuada interdum lorem quam vitae mi. Nunc et mi mauris. Suspendisse potenti. Vestibulum varius pulvinar ex, id imperdiet nibh mollis at.</p>
+		<div id='chart1'></div>
+		<p>Curabitur in rhoncus ipsum. Sed eget lobortis ligula. Nam eu massa semper, congue libero nec, tincidunt neque. Vivamus condimentum placerat metus, a rhoncus nisi. Sed nec ligula in tellus ultricies laoreet. Donec congue lorem et ligula pretium, sed accumsan metus laoreet. Ut posuere arcu at leo varius, porta condimentum massa iaculis. Nullam accumsan vitae nunc ac varius. Morbi rutrum, tellus nec cursus pharetra, nulla quam faucibus mauris, id congue dui mauris a dolor. Vivamus eu auctor purus, ultricies consequat justo.</p>
+		<div id='chart2'></div>
+		<p>Fusce sem mauris, egestas sed fringilla sit amet, porta at turpis. Etiam sit amet felis porttitor, mollis elit quis, efficitur tellus. In nulla augue, hendrerit eu odio sed, luctus fermentum enim. Vivamus vulputate leo ut sem ultrices, imperdiet auctor nulla placerat. Proin eu tempor mauris. Nunc congue sagittis dignissim. Praesent sit amet diam ultrices, bibendum urna vitae, sollicitudin dolor. Fusce gravida justo vel porttitor posuere. Mauris in sem nisl. Nullam nec libero ex. Sed tincidunt ipsum nec dui sollicitudin, nec luctus nulla vulputate. Vestibulum ornare a lorem ac bibendum.</p>
+		<div id='chart3'></div>
+		<p>Aliquam suscipit dolor et orci vulputate ornare. Cras in felis dolor. Vivamus tristique velit metus, vel condimentum erat sodales sed. Sed dapibus, nisi id dapibus mattis, augue sem sollicitudin tortor, at aliquam ligula dolor vitae arcu. Ut felis diam, posuere id leo et, tempor lacinia purus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer ac tortor nisi. Ut elementum, arcu eget fringilla feugiat, est massa vehicula lacus, ac ornare leo arcu pharetra est. Nam justo leo, eleifend et semper vel, dapibus sed velit.</p>
+		<div id='chart4'></div>
+		<p>Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Suspendisse hendrerit odio malesuada augue dictum consequat. Ut convallis hendrerit diam ut tincidunt. Nulla ac ligula nibh. Duis venenatis odio hendrerit sagittis accumsan. In hac habitasse platea dictumst. Sed fringilla lectus massa, at vulputate dolor gravida id. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed eget ornare ligula, sit amet posuere libero. Integer feugiat massa ac enim elementum, vehicula euismod ligula sollicitudin.</p>
+		<div id='chart5'></div>
+		<div id='chart6'></div>
+	</main>
+	<div id='toggle-mode'>Switch to <span>Night</span> Mode</div>
+	<script type="text/javascript" src="main.js"></script>
+	<script type="text/javascript" src="chart.js"></script>
+	<script type="text/javascript">
+		[0,1,2,3,4,/*5*/].forEach(function (i) {
+			loadChart(i, function (chart) {
+				if (i < 4) {
+					chart.x_on_zoom = function (x) {
+						return new Promise(function (resolve, reject) {
+							var timestamp = chart.data.x[x];
+							loadZoomed(i, timestamp, function (zChart) {
+								resolve(zChart);
+							});
+						});
+					}
+				}
+				Graph.render(document.querySelector('#chart'+(i+1)), chart);
+			});
+		});
+	</script>
+</body>
+</html>
