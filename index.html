@@ -151,7 +151,7 @@
                 </div>
             </div> -->
             <p><b>English:</b> passed FCE B2 exam (Upper-Intermediate) with 169 on the average.</p>
-            <p><b>P.S.: Age:</b> 17 y.o. (born in 2003)</p>
+            <p><b>P.S.: Age:</b> <span class="age">18</span> y.o. (born in 2003)</p>
             <div class="ps">
                 <span class="separator"></span>
                 <p>Okay, so here my serious CV ends. If you press <span class="ctrl">Ctrl</span>+P, you would see — this part is hidden.</p>
@@ -230,17 +230,18 @@
             </div>
         </div>
         <script type="text/javascript">
+            for (const age of (document.querySelectorAll('.age') || []))
+                age.innerHTML = ~~((Date.now()/100000-10437048)/315360) + "";
+
             if (window.navigator.platform.toLowerCase().indexOf('mac') >= 0) {
-                const ctrls = document.querySelectorAll('.ctrl') || [];
-                for (const ctrl of ctrls)
+                for (const ctrl of (document.querySelectorAll('.ctrl') || []))
                     ctrl.innerHTML = '⌘';
             }
 
             const takeRandom = arr => arr[Math.round(Math.random() * (arr.length - 1))];
             // https://www.calvertjournal.com/features/show/4927/kiev-now-kiev-or-kyiv-what-to-call-ukraines-capital
             const cityName = takeRandom(['Kyiv', 'Kiev']);
-            const cities = document.querySelectorAll('.city') || [];
-            for (const city of cities)
+            for (const city of (document.querySelectorAll('.city') || []))
                 city.innerHTML = cityName;
         </script>
     </body>
