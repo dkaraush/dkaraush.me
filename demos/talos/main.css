@@ -33,7 +33,22 @@ body {
 }
 @media (max-width: 700px) {
   #page-loading pre#eye {
-    font-size: 8px;
+    font-size: 8px !important;
+  }
+  #page-terminal > pre#terminal {
+    font-size: 70% !important;
+    padding: 16px !important;
+    padding-bottom: 40vh !important;
+  }
+  #document {
+    width: 85vw !important;
+    height: 70vh !important;
+  }
+  #variants {
+    width: 95% !important;
+  }
+  #variants > div {
+    font-size: 75% !important;
   }
 }
 @media (max-width: 300px) {
@@ -177,6 +192,8 @@ pre {
   overflow: hidden;
   break-after: auto;
   white-space: pre-wrap;
+
+  font-size: 75%;
 }
 #document.hidden {
   transform: translateX(-50%) translateY(-50%) scale(0);

@@ -96,6 +96,7 @@ loadingState.innerHTML = 'Loading...';
 const closeLoading = () => {
   pageLoading.style.display = 'none';
   stopEyeAnimation();
+  window.beep = null;
   pageTerminal.style.display = 'block';
 }
 const loaded1 = async () => {
@@ -234,8 +235,9 @@ const type = async (str, d = 0, withSound = true) => {
   if (withSound)
     sound('TerminalTypingComputer');
   for (const s of (String(str) || [])) {
-    if (s !== ' ' && s !== '\n')
-      await wait(8 + 15 * Math.random() + d);
+    const waitMs = 8 + 15 * Math.random() + d;
+    if (s !== ' ' && s !== '\n' && waitMs > 0)
+      await wait(waitMs);
     write(s);
   }
   if (withSound)
