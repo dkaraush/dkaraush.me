@@ -44,6 +44,9 @@ body {
     width: 85vw !important;
     height: 70vh !important;
   }
+  #document pre {
+    font-size: 75%;
+  }
   #variants {
     width: 95% !important;
   }
@@ -192,8 +195,6 @@ pre {
   overflow: hidden;
   break-after: auto;
   white-space: pre-wrap;
-
-  font-size: 75%;
 }
 #document.hidden {
   transform: translateX(-50%) translateY(-50%) scale(0);
