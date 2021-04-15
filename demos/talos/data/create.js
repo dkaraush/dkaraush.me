@@ -11,6 +11,8 @@ const getJSON = path => JSON.parse(getText(path));
 
 const rT = (translation, key) => 
   translation.match(new RegExp('' + RegExp.escape(key) + '=(.+)'))[1]
+    .replace(/\&lt\;/g, '<')
+    .replace(/\&gt\;/g, '>')
 
 const base = getJSON('./terminalbase.json');
 for (const lang of langs) {
