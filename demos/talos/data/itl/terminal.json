@@ -1,0 +1,20 @@
+{
+	"boot-1": "Caricamento sessione biblioteca in corso",
+	"boot-2": " Completato",
+	"boot-3": "Montaggio dei dischi locali in corso",
+	"boot-4": " [47 milioni] di risorse distribuite trovati",
+	"boot-5": "Collegamento alle unità di reti in corso",
+	"boot-6": " Errore: rete inaccessibile.",
+	"boot-7": "Sessione dell'archivio della biblioteca pronta.",
+	"loading": "Caricamento in corso...",
+	"press-any-key": "Premi un tasto per iniziare",
+	"cmd-stop": "Interrompi",
+	"cmd-back": "Indietro",
+	"cmd-capsule": "Capsula del tempo {{id}}",
+	"cmd-capsule-with-name": "Capsula del tempo {{id}} \"{{name}}\"",
+	"cmd-terminal": "Terminale {{name}}",
+	"cmd-close": "Chiudi",
+	"cmd-terminals": "Visualizza i terminali",
+	"cmd-capsules": "Ascolta le capsule del tempo",
+	"cmd-credits": "Riconoscimenti"
+}

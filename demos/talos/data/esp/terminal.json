@@ -1,0 +1,20 @@
+{
+	"boot-1": "Cargando la sesión de biblioteca",
+	"boot-2": " Terminado.",
+	"boot-3": "Montaje de discos locales",
+	"boot-4": " [47 milliones de] recursos distribuidos encontrados",
+	"boot-5": "Conexión de las unidades de red",
+	"boot-6": " Error: red inaccesible.",
+	"boot-7": "Sesión del archivo de biblioteca preparada.",
+	"loading": "Cargando...",
+	"press-any-key": "Pulsa cualquier tecla para iniciar",
+	"cmd-stop": "Detiene",
+	"cmd-back": "Atrás",
+	"cmd-capsule": "Capsula de tiempo {{id}}",
+	"cmd-capsule-with-name": "Capsula de tiempo {{id}} \"{{name}}\"",
+	"cmd-terminal": "Terminal {{name}}",
+	"cmd-close": "Cerrar",
+	"cmd-terminals": "Ver terminales",
+	"cmd-capsules": "Escuche las cápsulas del tiempo",
+	"cmd-credits": "Créditos"
+}

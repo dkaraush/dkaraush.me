@@ -1,0 +1,20 @@
+{
+	"boot-1": "Chargement de session bibliothèque",
+	"boot-2": " Terminé.",
+	"boot-3": "Montage disques locaux",
+	"boot-4": " [47 millions] ressources distribuées trouvées ",
+	"boot-5": "Connexion lecteurs réseau",
+	"boot-6": " Erreur : réseau inaccessible.",
+	"boot-7": "Session d'Archive de bibliothèque prête.",
+	"loading": "Chargement...",
+	"press-any-key": "Appuyer sur une touche pour commencer",
+	"cmd-stop": "Arrêter",
+	"cmd-back": "Retour",
+	"cmd-capsule": "Capsule temporelle {{id}}",
+	"cmd-capsule-with-name": "Capsule temporelle {{id}} \"{{name}}\"",
+	"cmd-terminal": "Terminal {{name}}",
+	"cmd-close": "Fermer",
+	"cmd-terminals": "Voir les terminaux",
+	"cmd-capsules": "Écoutez les capsules temporelles",
+	"cmd-credits": "Crédits"
+}

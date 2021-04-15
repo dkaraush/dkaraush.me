@@ -1,0 +1,556 @@
+{
+	"TermDlg.JournalHeader.Cloud_1_01": [
+		{
+			"tag": "TermDlg.FoundTexts.IAN.Welcome.Name",
+			"date": "0000/07/01",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Athena.Chapter006.Name",
+			"date": "1912 CE",
+			"folder": "lit_arch"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.General.FigureItOut.Name",
+			"date": "2032/02/19",
+			"folder": "EP_arch"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_1_02": [
+		{
+			"tag": "TermDlg.FoundTexts.IAN.FirstDay.Name",
+			"date": "0000/01/21",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Athena.Analysis.Name",
+			"date": "2031/03/13",
+			"folder": "webcrawl"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Straton.Talos.Name",
+			"date": "260 BCE",
+			"folder": "CL_arch"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_1_02_Extra": [
+		{
+			"tag": "TermDlg.FoundTexts.Milton.ErrorLog.Name",
+			"date": "0000/00/00",
+			"folder": "temp"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.General.HumanMachine.Name",
+			"date": "2019/01/30",
+			"folder": "webcrawl"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.IAN.ArghSolutions.Name",
+			"date": "0000/06/29",
+			"folder": "EP_arch"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_1_03": [
+		{
+			"tag": "TermDlg.FoundTexts.Alexandra.AI_feedback.Name",
+			"date": "9999/99/99",
+			"folder": "EP_arch"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.IAN.TeamLeads.Name",
+			"date": "0000/07/05",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Straton.Wiki.Name",
+			"date": "2019/12/03",
+			"folder": "webcrawl"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_1_04": [
+		{
+			"tag": "TermDlg.FoundTexts.IAN.Progress001.Name",
+			"date": "0000/07/02",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Arkady.MailError.Name",
+			"date": "0000/06/03",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Straton.Beginnings.Name",
+			"date": "260 BCE",
+			"folder": "CL_arch"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_1_05": [
+		{
+			"tag": "TermDlg.FoundTexts.IAN.EL.Name",
+			"date": "9999/09/09",
+			"folder": "webcrawl"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Alexandra.AI_Citizenship.Name",
+			"date": "9997/03/13",
+			"folder": "webcrawl"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Athena.Chapter008.Name",
+			"date": "1912 CE",
+			"folder": "lit_arch"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_1_06": [
+		{
+			"tag": "TermDlg.FoundTexts.IAN.LOL.Name",
+			"date": "0000/08/01",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Cicero.Tusculan.Name",
+			"date": "45 BCE",
+			"folder": "CL_arch"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.General.Chatbots.Name",
+			"date": "2024/04/16",
+			"folder": "webcrawl"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_1_06_Extra": [
+		{
+			"tag": "TermDlg.FoundTexts.Straton.SimplePrinciple.Name",
+			"date": "2018/09/09",
+			"folder": "webcrawl"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Arkady.Journal077.Name",
+			"date": "0000/06/25",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.General.Post437_Comments.Name",
+			"date": "0000/12/01",
+			"folder": "webcrawl"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_1_06_Extra_02": [
+		{
+			"tag": "TermDlg.FoundTexts.General.ClassicalPhilosophers.Name",
+			"date": "0000/09/16",
+			"folder": "LZ19col"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.IAN.Progress003.Name",
+			"date": "0000/07/22",
+			"folder": "loc"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_1_07": [
+		{
+			"tag": "TermDlg.FoundTexts.Athena.Chapter009.Name",
+			"date": "1912 CE",
+			"folder": "lit_arch"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Alexandra.Singularity.Name",
+			"date": "9995/10/11",
+			"folder": "webcrawl"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.IAN.AskMeAnything.Name",
+			"date": "9999/03/13",
+			"folder": "loc"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_1_08": [
+		{
+			"tag": "TermDlg.FoundTexts.Alexandra.Talos.Name",
+			"date": "0000/06/03",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Butler.HumanBlood.Name",
+			"date": "1872 CE",
+			"folder": "lit_arch"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Arkady.ArchiveImportant.Name",
+			"date": "0000/06/03",
+			"folder": "EP_arch"
+		},
+		null
+	],
+	"TermDlg.JournalHeader.Cloud_2_01": [
+		{
+			"tag": "TermDlg.FoundTexts.Osiris.Chapter001.Name",
+			"date": "???? BCE",
+			"folder": "eg_src"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.General.GotItLyrics.Name",
+			"date": "0000/05/01",
+			"folder": "webcrawl"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.General.Immortality.Name",
+			"date": "0000/04/17",
+			"folder": "webcrawl"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_2_01_Extra": [
+		{
+			"tag": "TermDlg.FoundTexts.General.Mutation.Name",
+			"date": "2028/08/29",
+			"folder": "webcrawl"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.IAN.Capacity.Name",
+			"date": "0000/06/22",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.General.Evolution.Name",
+			"date": "2013/07/05",
+			"folder": "webcrawl"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_2_02": [
+		{
+			"date": "2013/02/13",
+			"folder": "webcrawl"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.General.WeightLoss.Name",
+			"date": "0000/07/23",
+			"folder": "webcrawl"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Arkady.Journal081.Name",
+			"date": "0000/07/04",
+			"folder": "loc"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_2_03": [
+		{
+			"tag": "TermDlg.FoundTexts.IAN.Progress009.Name",
+			"date": "0000/08/02",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Osiris.Chapter003.Name",
+			"date": "???? BCE",
+			"folder": "eg_src"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.General.JustWar.Name",
+			"date": "2009/01/01",
+			"folder": "acdm_arc"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_2_03_Extra": [
+		{
+			"tag": "TermDlg.FoundTexts.Johnson.BodySoul.Name",
+			"date": "1759 CE",
+			"folder": "lit_arch"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.IAN.Soma.Name",
+			"date": "0000/07/15/",
+			"folder": "loc"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_2_04": [
+		{
+			"tag": "TermDlg.FoundTexts.Osiris.Chapter006.Name",
+			"date": "???? BCE",
+			"folder": "eg_src"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.General.ChatlogCharlie.Name",
+			"date": "0000/11/02",
+			"folder": "webcrawl"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Arkady.Journal084.Name",
+			"date": "0000/10/01",
+			"folder": "loc"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_2_05": [
+		{
+			"tag": "TermDlg.FoundTexts.Osiris.Chapter007.Name",
+			"date": "???? BCE",
+			"folder": "eg_src"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.IAN.ComingSoon.Name",
+			"date": "0000/08/18",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.General.Blog24.Name",
+			"date": "2028/05/31",
+			"folder": "webcrawl"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_2_05_Extra": [
+		{
+			"tag": "TermDlg.FoundTexts.Hippocrates.Corpus.Name",
+			"date": "400 BCE",
+			"folder": "CL_arch"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Chesterton.Brain.Name",
+			"date": "1905 CE",
+			"folder": "phil_arc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Bronstein.Brain.Name",
+			"date": "1926 CE",
+			"folder": "phil_arc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.General.Neuroscience.Name",
+			"date": "2010/02/16",
+			"folder": "med_arc"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_2_06": [
+		{
+			"tag": "TermDlg.FoundTexts.Osiris.Chapter011.Name",
+			"date": "???? BCE",
+			"folder": "eg_src"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.IAN.Progress016.Name",
+			"date": "0000/10/04",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Johnson.ChoiceOfLife.Name",
+			"date": "1759 CE",
+			"folder": "lit_arch"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_2_07": [
+		{
+			"tag": "TermDlg.FoundTexts.General.Chatlog9798.Name",
+			"date": "0000/11/13",
+			"folder": "webcrawl"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.IAN.NorwegianBlue.Name",
+			"date": "0000/10/04",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Osiris.Chapter021.Name",
+			"date": "???? BCE",
+			"folder": "eg_src"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_2_07_Extra": [
+		{
+			"tag": "TermDlg.FoundTexts.Kant.SecondThesis.Name",
+			"date": "1784 CE",
+			"folder": "phil_arc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Johnson.Boundary.Name",
+			"date": "1759 CE",
+			"folder": "lit_arch"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.General.Robots.Name",
+			"date": "0000/00/00",
+			"folder": "webcrawl"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_2_08": [
+		{
+			"tag": "TermDlg.FoundTexts.General.Orangutan.Name",
+			"date": "9999/12/24",
+			"folder": "webcrawl"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Blake.Archive.Name",
+			"date": "2022/12/16",
+			"folder": "webcrawl"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.IAN.Usernames.Name",
+			"date": "0000/09/03",
+			"folder": "loc"
+		},
+		{
+			"date": "0000/00/00",
+			"folder": "loc"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_3_01": [
+		{
+			"date": "890 CE",
+			"folder": "mdv_th"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.IAN.SarabhaiJournal.Name",
+			"date": "0000/08/05",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.General.Hope.Name",
+			"date": "0000/12/01",
+			"folder": "EP_arch"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_3_01_Extra": [
+		{
+			"tag": "TermDlg.FoundTexts.Alexandra.AgainstSurvival.Name",
+			"date": "0000/07/30",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Butler.HumanEvolution.Name",
+			"date": "1872 CE",
+			"folder": "lit_arch"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.General.Einstein.Name",
+			"date": "2029/07/23",
+			"folder": "webcrawl"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_3_02": [
+		{
+			"tag": "TermDlg.FoundTexts.General.Family.Name",
+			"date": "0000/11/27",
+			"folder": "webcrawl"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.IAN.LastDays.Name",
+			"date": "0000/09/26",
+			"folder": "loc"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_3_03": [
+		{
+			"tag": "TermDlg.FoundTexts.General.Post437.Name",
+			"date": "0000/11/19",
+			"folder": "webcrawl"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Kant.ThirdThesis.Name",
+			"date": "1784 CE",
+			"folder": "phil_arc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.General.Humblebrag.Name",
+			"date": "0000/12/05",
+			"folder": "webcrawl"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_3_04": [
+		{
+			"tag": "TermDlg.FoundTexts.General.Pets.Name",
+			"date": "0000/12/11",
+			"folder": "webcrawl"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Arkady.Journal099.Name",
+			"date": "0000/11/30",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Blake.ContrariesTxt.Name",
+			"date": "1793 CE",
+			"folder": "poet_arc"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_3_05": [
+		{
+			"tag": "TermDlg.FoundTexts.General.PartyOnDudes.Name",
+			"date": "0000/12/04",
+			"folder": "EP_arch"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.IAN.Progress032.Name",
+			"date": "0000/11/07",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.General.PhilosophyTeeth.Name",
+			"date": "2029/07/03",
+			"folder": "webcrawl"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_3_05_Extra": [
+		{
+			"date": "9996/06/23",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Bronstein.Matter.Name",
+			"date": "1926 CE",
+			"folder": "phil_arc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Dick.BuildAUniverse.Name",
+			"date": "2014/11/11",
+			"folder": "acdm_arc"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_3_06": [
+		{
+			"tag": "TermDlg.FoundTexts.General.Faith.Name",
+			"date": "0000/12/09",
+			"folder": "EP_arch"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.IAN.ThankYou.Name",
+			"date": "0000/12/14",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Butler.HumanSoul.Name",
+			"date": "1872 CE",
+			"folder": "phil_arc"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_3_07": [
+		{
+			"tag": "TermDlg.FoundTexts.Arkady.Journal108.Name",
+			"date": "0000/12/14",
+			"folder": "loc"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.General.InventionOfBorders.Name",
+			"date": "2018/10/19",
+			"folder": "webcrawl"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Eadwald.Apocrypha009.Name",
+			"date": "890 CE",
+			"folder": "mdv_th"
+		}
+	],
+	"TermDlg.JournalHeader.Cloud_3_08": [
+		{
+			"tag": "TermDlg.FoundTexts.Butler.HumanEye.Name",
+			"date": "1872 CE",
+			"folder": "lit_arch"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Eadwald.Tetromino.Name",
+			"date": "2030/06/14",
+			"folder": "mdv_th"
+		},
+		{
+			"tag": "TermDlg.FoundTexts.Wollstonecraft.Preservation.Name",
+			"date": "1796 CE",
+			"folder": "phil_arc"
+		},
+		null
+	]
+}

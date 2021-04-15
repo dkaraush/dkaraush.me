@@ -1,0 +1,20 @@
+{
+	"boot-1": "Učitavanje knjižnične sesije",
+	"boot-2": " Gotovo.",
+	"boot-3": "Mountam lokalne diskove",
+	"boot-4": " [47 milijuna] distribuiranih izvora pronađeno",
+	"boot-5": "Povezivanje mrežnih driveova",
+	"boot-6": " Greška: mreža nedostupna.",
+	"boot-7": "Sesija arhive knjižnice spremna.",
+	"loading": "Učitavanje...",
+	"press-any-key": "Pritisni bilo koju tipku kako bi započeo",
+	"cmd-stop": "Stani",
+	"cmd-back": "Natrag",
+	"cmd-capsule": "Vremenska kapsula {{id}}",
+	"cmd-capsule-with-name": "Vremenska kapsula {{id}} \"{{name}}\"",
+	"cmd-terminal": "Terminal {{name}}",
+	"cmd-close": "Zatvori",
+	"cmd-terminals": "Pogledajte terminale",
+	"cmd-capsules": "Poslušajte vremenske kapsule",
+	"cmd-credits": "ODJAVNA ŠPICA"
+}

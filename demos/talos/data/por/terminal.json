@@ -1,0 +1,20 @@
+{
+	"boot-1": "Carregando biblioteca de sessão",
+	"boot-2": " Feito.",
+	"boot-3": "Montando discos locais",
+	"boot-4": " [47 milhões] recursos distribuidos encontrados",
+	"boot-5": "Conectando drivers de rede",
+	"boot-6": " Erro: rede inacessivel.",
+	"boot-7": "Sessão da biblioteca de arquivo pronta.",
+	"loading": "Carregando...",
+	"press-any-key": "Pressione qualquer tecla para começar",
+	"cmd-stop": "Parar",
+	"cmd-back": "Voltar",
+	"cmd-capsule": "Tempo cápsula {{id}}",
+	"cmd-capsule-with-name": "Tempo cápsula {{id}} \"{{name}}\"",
+	"cmd-terminal": "Terminal {{name}}",
+	"cmd-close": "Fechar",
+	"cmd-terminals": "Visualize terminais",
+	"cmd-capsules": "Ouça as cápsulas do tempo",
+	"cmd-credits": "Créditos"
+}

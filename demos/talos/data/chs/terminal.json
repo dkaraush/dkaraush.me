@@ -1,0 +1,20 @@
+{
+	"boot-1": "正在加载库会话",
+	"boot-2": "完成.",
+	"boot-3": "正在安装本地磁盘",
+	"boot-4": "已找到[47,000,000]分布式资源",
+	"boot-5": "正在连接网络驱动器",
+	"boot-6": "错误：网络不可访问。",
+	"boot-7": "库存档会话准备就绪。",
+	"loading": "载入中...",
+	"press-any-key": "按任意键启动",
+	"cmd-stop": "停止",
+	"cmd-back": "返回",
+	"cmd-capsule": "时间囊 {{id}}",
+	"cmd-capsule-with-name": "时间囊 {{id}} \"{{name}}\"",
+	"cmd-terminal": "终端 {{name}}",
+	"cmd-close": "关闭",
+	"cmd-terminals": "查看终端",
+	"cmd-capsules": "听时间胶囊",
+	"cmd-credits": "开发人员"
+}

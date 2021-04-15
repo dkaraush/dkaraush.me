@@ -1,0 +1,20 @@
+{
+	"boot-1": "正在加載檔案庫工作階段",
+	"boot-2": "完成.",
+	"boot-3": "正在安裝本地磁盤",
+	"boot-4": "已找到[47,000,000]分散式資源",
+	"boot-5": "正在連接網路驅動",
+	"boot-6": "錯誤：網路不可訪問。 ",
+	"boot-7": "圖書館檔案庫工作階段準備就緒。",
+	"loading": "載入中...",
+	"press-any-key": "按任意鍵開始",
+	"cmd-stop": "停止",
+	"cmd-back": "返回",
+	"cmd-capsule": "音頻日誌 {{id}}",
+	"cmd-capsule-with-name": "音頻日誌 {{id}} \"{{name}}\"",
+	"cmd-terminal": "終端 {{name}}",
+	"cmd-close": "關閉",
+	"cmd-terminals": "查看終端",
+	"cmd-capsules": "聽時間膠囊",
+	"cmd-credits": "開發人員名單"
+}

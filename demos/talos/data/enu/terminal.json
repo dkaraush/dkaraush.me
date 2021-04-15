@@ -1,0 +1,20 @@
+{
+	"boot-1": "Loading library session",
+	"boot-2": " Done.",
+	"boot-3": "Mounting local disks",
+	"boot-4": " [47 million] distributed resources found",
+	"boot-5": "Connecting network drives",
+	"boot-6": " Error: network inaccessible.",
+	"boot-7": "Library archive session ready.",
+	"loading": "Loading...",
+	"press-any-key": "Press any key to start",
+	"cmd-stop": "Stop",
+	"cmd-back": "Back",
+	"cmd-capsule": "Time capsule {{id}}",
+	"cmd-capsule-with-name": "Time capsule {{id}} \"{{name}}\"",
+	"cmd-terminal": "Terminal {{name}}",
+	"cmd-close": "Close",
+	"cmd-terminals": "Show terminals",
+	"cmd-capsules": "Listen to capsules",
+	"cmd-credits": "Credits"
+}

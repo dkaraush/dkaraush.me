@@ -1,0 +1,20 @@
+{
+	"boot-1": "도서관 세션 불러오는 중",
+	"boot-2": " 완료.",
+	"boot-3": "로컬 디스크 작동 중",
+	"boot-4": " [4,700만] 개의 분산된 자원 검색.",
+	"boot-5": "네트워크 드라이브 연결 중",
+	"boot-6": " 오류: 네트워크 접속 불가.",
+	"boot-7": "도서관 문서 세션 준비됨.",
+	"loading": "로드 중 ...",
+	"press-any-key": "시작하려면 아무 키나 누르십시오",
+	"cmd-stop": "중지",
+	"cmd-back": "백",
+	"cmd-capsule": "오디오 로그 {{id}}",
+	"cmd-capsule-with-name": "오디오 로그 {{id}} \"{{name}}\"",
+	"cmd-terminal": "단말기 {{name}}",
+	"cmd-close": "가까운",
+	"cmd-terminals": "터미널보기",
+	"cmd-capsules": "타임 캡슐을 들어보세요",
+	"cmd-credits": "크레딧"
+}

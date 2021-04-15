@@ -1,0 +1,20 @@
+{
+	"boot-1": "Wczytywanie sesji biblioteki",
+	"boot-2": " Gotowe.",
+	"boot-3": "Obliczanie parametrów na dyskach lokalnych",
+	"boot-4": " Znaleziono [47 milionów] wyników",
+	"boot-5": "Łączenie z dyskami sieciowymi",
+	"boot-6": " Błąd: sieć niedostępna.",
+	"boot-7": "Sesja archiwum biblioteki jest gotowa.",
+	"loading": "Wczytywanie...",
+	"press-any-key": "Naciśnij dowolny klawisz aby rozpocząć",
+	"cmd-stop": "Zatrzymaj",
+	"cmd-back": "Powrót",
+	"cmd-capsule": "Kapsuła czasu {{id}}",
+	"cmd-capsule-with-name": "Kapsuła czasu {{id}} \"{{name}}\"",
+	"cmd-terminal": "Terminal {{name}}",
+	"cmd-close": "Zamknij",
+	"cmd-terminals": "Pokaż terminale",
+	"cmd-capsules": "Posłuchaj kapsuł czasu",
+	"cmd-credits": "Twórcy"
+}

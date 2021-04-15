@@ -1,0 +1,20 @@
+{
+	"boot-1": "Bibliothekssitzung lädt",
+	"boot-2": " Fertig.",
+	"boot-3": "Lokale Datenträger eingebunden",
+	"boot-4": " [47 Millionen] verteilte Ressourcen gefunden",
+	"boot-5": "Netzlaufwerke angeschlossen",
+	"boot-6": " Fehler: Netzwerk nicht verfügbar..",
+	"boot-7": "Bibliotheksarchivsitzung bereit.",
+	"loading": "Lade...",
+	"press-any-key": "Beliebige Taste zum Starten",
+	"cmd-stop": "Stop",
+	"cmd-back": "Zurück",
+	"cmd-capsule": "Zeitkapsel {{id}}",
+	"cmd-capsule-with-name": "Zeitkapsel {{id}} \"{{name}}\"",
+	"cmd-terminal": "Terminal {{name}}",
+	"cmd-close": "Schließen",
+	"cmd-terminals": "Terminals anzeigen",
+	"cmd-capsules": "Hören Sie sich die Zeitkapseln an",
+	"cmd-credits": "Credits"
+}
