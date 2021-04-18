@@ -16,5 +16,6 @@
 	"cmd-close": "Fechar",
 	"cmd-terminals": "Visualize terminais",
 	"cmd-capsules": "Ouça as cápsulas do tempo",
-	"cmd-credits": "Créditos"
+	"cmd-credits": "Créditos",
+	"cmd-capsules-all": "Todos"
 }

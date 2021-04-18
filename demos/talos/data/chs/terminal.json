@@ -16,5 +16,6 @@
 	"cmd-close": "关闭",
 	"cmd-terminals": "查看终端",
 	"cmd-capsules": "听时间胶囊",
-	"cmd-credits": "开发人员"
+	"cmd-credits": "开发人员",
+	"cmd-capsules-all": "所有"
 }

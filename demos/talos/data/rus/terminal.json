@@ -16,5 +16,6 @@
 	"cmd-close": "Закрыть",
 	"cmd-terminals": "Просмотреть терминалы",
 	"cmd-capsules": "Прослушать капсулы времени",
-	"cmd-credits": "Авторы"
+	"cmd-credits": "Авторы",
+	"cmd-capsules-all": "Все"
 }

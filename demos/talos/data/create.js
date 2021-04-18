@@ -75,5 +75,7 @@ for (const lang of langs) {
 
   terminal['cmd-credits'] = rT(translation, 'Episode.Name.Credits');
 
+  terminal['cmd-capsules-all'] = rT(translation, 'Menu.All');
+
   fs.writeFileSync('./' + lang + '/terminal.json', JSON.stringify(terminal, null, '\t'));
 }

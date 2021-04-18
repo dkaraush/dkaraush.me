@@ -16,5 +16,6 @@
 	"cmd-close": "關閉",
 	"cmd-terminals": "查看終端",
 	"cmd-capsules": "聽時間膠囊",
-	"cmd-credits": "開發人員名單"
+	"cmd-credits": "開發人員名單",
+	"cmd-capsules-all": "所有"
 }

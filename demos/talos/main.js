@@ -30,7 +30,10 @@ const variants = document.querySelector('#variants');
 
 const showVariants = (menus, preferable) => {
   variants.innerHTML = '';
-  variants.className = menus.length > 3 ? 'two-columns' : '';
+  variants.className = [
+    (menus.length > 3 ? 'two-columns' : ''),
+    (menus.length > 9 ? 'small' : '')
+  ].join(' ');
 
   return new Promise(async (resolve) => {
     let selected = false;
@@ -81,7 +84,7 @@ const stopEyeAnimation = (() => {
 
     eyePre.innerHTML = eye[eyeKeyframes[i % eyeKeyframes.length]];
     
-    if (typeof window.beep === 'function' && Math.random() > 0.6)
+    if (typeof window.beep === 'function' && Math.random() > 0.8)
       window.beep(~~(Math.random()*14+1));
 
     i++;
@@ -253,6 +256,8 @@ const userType = async (str, d = 45) => {
 const F = sec => 
   String(~~(sec / 60)).padStart(2, '0') + ':' +
   String(~~(sec % 60)).padStart(2, '0');
+const CAPSULE_AUDIO_ENDED = 0;
+const CAPSULE_AUDIO_STOPPED = 1;
 const capsuleRun = async i => {
   const audio = document.createElement('audio');
   audio.src = 'capsules/' + LNG + '/' + i + '.mp3';
@@ -264,24 +269,25 @@ const capsuleRun = async i => {
   audio.play();
 
   const interval = setInterval(() => {
-    const p = audio.currentTime / audio.duration
-
+    const p = audio.currentTime / audio.duration;
     rewrite('[' + F(audio.currentTime) + '] [' + 
-      '='.repeat(Math.floor(30 * p)) +
-      '-'.repeat(Math.ceil(30 * (1 - p))) +
+      '='.repeat(Math.ceil(30 * p)) +
+      '-'.repeat(Math.floor(30 * (1 - p))) +
       '] [' + F(audio.duration) + ']'
     )
   }, 100);
 
   const СMD_STOP = t('cmd-stop');
-  await Promise.race([
-    new Promise(resolve => audio.onended = () => resolve()),
-    showVariants([ СMD_STOP ])
+  const reason = await Promise.race([
+    new Promise(resolve => audio.onended = () => resolve(CAPSULE_AUDIO_ENDED)),
+    showVariants([ СMD_STOP ]).then(() => CAPSULE_AUDIO_STOPPED)
   ]);
   audio.pause();
   variants.innerHTML = '';
 
   clearInterval(interval);
+
+  return reason;
 }
 
 const documentPage = document.querySelector('#document');
@@ -345,7 +351,7 @@ const startTerminal = async () => {
       for (const [ name ] of terminals) {
         const CMD_TERMINAL = t('cmd-terminal', { name })
         CMD_TERMINALS.push(CMD_TERMINAL);
-        await type(CMD_TERMINAL + '\n', -7);
+        await type(CMD_TERMINAL + '\n', -12);
       }
 
       while (true) {
@@ -390,6 +396,7 @@ const startTerminal = async () => {
         }
       }
     } else if (cmd === CMD_CAPSULES) {
+      const CMD_ALL_CAPSULES = t('cmd-capsules-all');
       const CMD_CAPSULES = [];
       for (let id = 1; id <= 22; ++id) {
         const capsuleName = (CAPSULENAMES || [])[id - 1];
@@ -400,13 +407,25 @@ const startTerminal = async () => {
         );
         CMD_CAPSULES.push(CMD_CAPSULE);
 
-        await type(CMD_CAPSULE + '\n', -12);
+        await type(CMD_CAPSULE + '\n', capsuleName ? -10 : -18);
       }
 
       while (true) {
-        const capsule = await prompt([...CMD_CAPSULES, CMD_BACK]);
+        const capsule = await prompt([...CMD_CAPSULES, CMD_ALL_CAPSULES, CMD_BACK]);
         if (capsule === CMD_BACK)
           break;
+        if (capsule === CMD_ALL_CAPSULES) {
+          for (let id = 1; id <= 22; ++id) {
+            await type(CMD_CAPSULES[id - 1] + '\n');
+            const reason = await capsuleRun(id);
+            if (reason === CAPSULE_AUDIO_STOPPED) {
+              await write('\n');
+              break;
+            }
+            await write('\n\n');
+          }
+          break;
+        }
 
         const capsuleId = CMD_CAPSULES.findIndex(cmd => capsule === cmd) + 1;
 

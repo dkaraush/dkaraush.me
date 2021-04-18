@@ -16,5 +16,6 @@
 	"cmd-close": "Zatvori",
 	"cmd-terminals": "Pogledajte terminale",
 	"cmd-capsules": "Poslušajte vremenske kapsule",
-	"cmd-credits": "ODJAVNA ŠPICA"
+	"cmd-credits": "ODJAVNA ŠPICA",
+	"cmd-capsules-all": "Sve"
 }

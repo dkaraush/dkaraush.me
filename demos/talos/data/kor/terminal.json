@@ -16,5 +16,6 @@
 	"cmd-close": "가까운",
 	"cmd-terminals": "터미널보기",
 	"cmd-capsules": "타임 캡슐을 들어보세요",
-	"cmd-credits": "크레딧"
+	"cmd-credits": "크레딧",
+	"cmd-capsules-all": "모든"
 }

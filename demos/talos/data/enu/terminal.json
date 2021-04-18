@@ -16,5 +16,6 @@
 	"cmd-close": "Close",
 	"cmd-terminals": "Show terminals",
 	"cmd-capsules": "Listen to capsules",
-	"cmd-credits": "Credits"
+	"cmd-credits": "Credits",
+	"cmd-capsules-all": "All"
 }

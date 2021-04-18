@@ -85,11 +85,11 @@ body {
 .blink {
   color: white;
   background: black;
-  animation: blink-animation .8s linear infinite;
+  animation: blink-animation .888164s linear infinite;
 }
 @keyframes blink-animation {
   0% { color: white; background: black; }
-  49.5% { color: white; background: black; }
+  49.9% { color: white; background: black; }
   50% { color: black; background: white; }
   100% { color: black; background: white; }
 }
@@ -149,6 +149,16 @@ pre {
 }
 #variants.two-columns {
   grid-template-columns: repeat(2, 1fr);
+}
+#variants.small > div {
+  font-size: 90%;
+  padding: 6px;
+}
+@media (max-width: 700px) {
+  #variants.small > div {
+    font-size: 75%;
+    padding: 4px;
+  }
 }
 
 #page-terminal > pre#terminal {

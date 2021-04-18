@@ -16,5 +16,6 @@
 	"cmd-close": "クローズ",
 	"cmd-terminals": "ターミナルを表示します",
 	"cmd-capsules": "カプセルを聞いてください",
-	"cmd-credits": "クレジット"
+	"cmd-credits": "クレジット",
+	"cmd-capsules-all": "すべて"
 }
